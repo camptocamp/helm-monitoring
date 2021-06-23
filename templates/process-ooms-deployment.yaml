@@ -1,0 +1,69 @@
+{{- if .Values.process_ooms.enabled}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "monitoring.fullname" . }}-process-ooms
+  labels:
+    app: {{ template "monitoring.fullname" . }}
+    chart: {{ template "monitoring.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    service: process-ooms
+  {{- if .Values.openshift }}
+  annotations:
+    image.openshift.io/triggers: |
+      [
+        {{ template "monitoring.trigger" (dict "image" "process-ooms" "tag" .Values.process_ooms.image.tag "container" "process-ooms" "root" . ) }}
+      ]
+  {{- end }}
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: {{ template "monitoring.fullname" . }}
+      release: {{ .Release.Name }}
+      service: process-ooms
+  template:
+    metadata:
+      labels:
+        app: {{ template "monitoring.fullname" . }}
+        release: {{ .Release.Name }}
+        service: process-ooms
+    spec:
+      serviceAccountName: {{ template "monitoring.fullname" . }}-process-ooms
+      containers:
+        - name: process-ooms
+          {{- if .Values.openshift }}
+          image: " "
+          {{- else }}
+          image: {{ .Values.process_ooms.image.name }}:{{ .Values.process_ooms.image.tag }}
+          {{- end }}
+          imagePullPolicy: {{ .Values.openshift | ternary "IfNotPresent" .Values.process_ooms.image.pullPolicy }}
+          env:
+            - name: ES_URL
+              value: {{ .Values.elasticsearch.url }}
+            {{- if .Values.elasticsearch.auth }}
+            - name: ES_AUTH
+              value: "Basic {{ (printf "%s:%s" .Values.elasticsearch.auth.user .Values.elasticsearch.auth.password) | b64enc }}"
+            {{- end }}
+            - name: ES_INDEXES
+              value: "openshift-ch-1-*"
+            - name: NAMESPACE
+              value: {{ .Release.Namespace }}
+            - name: C2C_REQUESTS_DEFAULT_TIMEOUT
+              value: "30"
+            - name: LOG_TYPE
+              value: json
+            - name: LOG_LEVEL
+              value: INFO
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          securityContext:
+            runAsNonRoot: true
+          {{- include "common.containerConfig" (dict "service" .Values.process_ooms "root" .) | indent 10 }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+{{- end }}

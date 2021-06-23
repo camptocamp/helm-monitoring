@@ -1,0 +1,51 @@
+{{- define "rules" }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    app: {{ template "monitoring.fullname" .root }}
+    release: {{ .root.Release.Name }}
+    chart: {{ template "monitoring.chart" .root }}
+    heritage: {{ .root.Release.Service }}
+    prometheus: example
+    role: alert-rules
+  name: {{ include "monitoring.fullname" .root }}-{{ .name }}-rules
+spec:
+{{ tpl (.root.Files.Get ( print "prometheus_rules/" .name ".rules")) .root | indent 2 }}
+{{- end -}}
+
+{{- template "rules" (dict "name" "kubernetes" "root" .) }}
+
+{{- if .Values.statsd.enabled }}
+{{- template "rules" (dict "name" "statsd" "root" .) }}
+{{- end }}
+
+{{- if .Values.c2cwsgiutils.enabled }}
+{{-   template "rules" (dict "name" "c2cwsgiutils" "root" .) }}
+{{- end }}
+
+{{- if .Values.print.enabled }}
+{{-   template "rules" (dict "name" "mapfish-print" "root" .) }}
+{{- end}}
+
+{{- if .Values.global.enabled }}
+{{-   template "rules" (dict "name" "global" "root" .) }}
+{{-   template "rules" (dict "name" "alerts" "root" .) }}
+{{- end}}
+
+{{- if .Values.cache.enabled }}
+{{-   template "rules" (dict "name" "cache" "root" .) }}
+{{- end}}
+
+{{- if .Values.postgresql.enabled }}
+{{-   template "rules" (dict "name" "postgresql" "root" .) }}
+{{- end}}
+
+{{- if .Values.elasticsearch.enabled }}
+{{-   template "rules" (dict "name" "es" "root" .) }}
+{{- end}}
+
+{{- if .Values.apache.enabled }}
+{{-   template "rules" (dict "name" "apache" "root" .) }}
+{{- end}}

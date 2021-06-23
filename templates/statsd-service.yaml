@@ -1,0 +1,28 @@
+{{- if .Values.statsd.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "monitoring.fullname" . }}-statsd
+  labels:
+    app: {{ template "monitoring.fullname" . }}
+    chart: {{ template "monitoring.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    service: statsd
+    prometheus: "true"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9125
+      targetPort: statsd
+      protocol: UDP
+      name: statsd
+    - port: 9102
+      targetPort: http
+      protocol: TCP
+      name: prometheus
+  selector:
+    app: {{ template "monitoring.fullname" . }}
+    release: {{ .Release.Name }}
+    service: statsd
+{{- end }}

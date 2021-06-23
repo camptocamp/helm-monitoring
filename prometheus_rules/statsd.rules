@@ -1,0 +1,42 @@
+groups:
+  - name: geo_status_statsd_{{.Release.Namespace}}
+    rules:
+      - record: geo_federation:status_k8s
+        labels:
+          kind: statsd_errors
+          chart: {{.Chart.Name}}
+          release: {{.Release.Name}}
+        expr: |
+          (
+            sum by (namespace) (
+              increase(statsd_exporter_sample_errors_total{namespace="{{.Release.Namespace}}"}[{{.Values.resolution}}])
+            ) > bool 0 * 1
+            or
+            sum by (namespace) (
+              statsd_exporter_samples_total{namespace="{{.Release.Namespace}}"}
+            ) * 0
+          ) + (
+            sum by (namespace) (
+              increase(statsd_exporter_tag_errors_total{namespace="{{.Release.Namespace}}"}[{{.Values.resolution}}])
+            ) > bool 0 * 1
+            or
+            sum by (namespace) (
+              statsd_exporter_samples_total{namespace="{{.Release.Namespace}}"}
+            ) * 0
+          ) + (
+            sum by (namespace) (
+              increase(statsd_exporter_events_conflict_total{namespace="{{.Release.Namespace}}"}[{{.Values.resolution}}])
+            ) > bool 0 * 1
+            or
+            sum by (namespace) (
+              statsd_exporter_samples_total{namespace="{{.Release.Namespace}}"}
+            ) * 0
+          ) + (
+            sum by (namespace) (
+              increase(statsd_exporter_events_unmapped_total{namespace="{{.Release.Namespace}}"}[{{.Values.resolution}}])
+            ) > bool 0 * 1
+            or
+            sum by (namespace) (
+              statsd_exporter_samples_total{namespace="{{.Release.Namespace}}"}
+            ) * 0
+          )

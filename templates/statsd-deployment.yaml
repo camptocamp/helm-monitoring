@@ -1,0 +1,68 @@
+{{- if .Values.statsd.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "monitoring.fullname" . }}-statsd
+  labels:
+    app: {{ template "monitoring.fullname" . }}
+    chart: {{ template "monitoring.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    service: statsd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "monitoring.fullname" . }}
+      release: {{ .Release.Name }}
+      service: statsd
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ template "monitoring.fullname" . }}
+        release: {{ .Release.Name }}
+        service: statsd
+    spec:
+      volumes:
+        - name: mappings-volume
+          configMap:
+            name: {{ include "monitoring.fullname" . }}-statsd
+      containers:
+        - name: {{ .Chart.Name }}
+          args:
+            - --statsd.mapping-config=/etc/statsd/mappings.yaml
+            - --log.level={{ .Values.statsd.log_level }}
+            - --statsd.listen-tcp=
+          image: "{{ .Values.statsd.image.name }}:{{ .Values.statsd.image.tag }}"
+          imagePullPolicy: {{ .Values.statsd.image.pullPolicy }}
+          volumeMounts:
+            - mountPath: /etc/statsd
+              name: mappings-volume
+          ports:
+            - name: statsd
+              containerPort: 9125
+              protocol: UDP
+            - name: http
+              containerPort: 9102
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: http
+          {{- include "common.containerConfig" (dict "service" .Values.statsd "root" .) | indent 10 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+  revisionHistoryLimit: 1
+{{- end }}

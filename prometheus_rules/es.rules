@@ -1,0 +1,41 @@
+groups:
+  - name: geo_status_es_{{.Release.Namespace}}
+    rules:
+      - record: geo_federation:status_k8s
+        labels:
+          kind: es_max_age
+          chart: {{.Chart.Name}}
+          release: prod
+          namespace: cluster
+        expr: |
+          (
+            max(statsd_es_max_age) > bool {{ mul .Values.elasticsearch.maxAge 60}}
+          ) * 10
+          or
+          max(statsd_es_max_age) * 0
+
+      - record: geo_federation:status_k8s
+        labels:
+          kind: es_max_age_error
+          chart: {{.Chart.Name}}
+          release: prod
+          namespace: cluster
+        expr: |
+          max(
+            delta(
+              statsd_es_count{success="0"}[20m]
+            ) > bool 0
+          ) * 10
+          or
+          max(statsd_es_count) * 0
+
+      - record: geo_federation:status_k8s
+        labels:
+          kind: es_roundtrip
+          chart: {{.Chart.Name}}
+          release: prod
+          namespace: cluster
+        expr: |
+          max(
+            statsd_es_roundtrip > bool {{.Values.elasticsearch.logTimeout}}
+          ) * 1

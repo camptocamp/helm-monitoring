@@ -1,0 +1,11 @@
+groups:
+  - name: geo_status_alerts_{{.Release.Namespace}}
+    rules:
+      - alert: GeoStatus
+        expr: |
+          sum by (namespace) (
+            geo_federation:status_k8s{release=~"prod.*|monitoring|cache"}
+          ) >= 10
+        for: {{ .Values.resolution }}
+        annotations:
+          summary: '{{ "The status of {{ $labels.namespace }} is critical" }}'

@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "monitoring.fullname" . }}-service-monitor
+  labels:
+    app: {{ template "monitoring.fullname" . }}
+    chart: {{ template "monitoring.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  selector:
+    matchLabels:
+      prometheus: "true"
+  endpoints:
+    - port: prometheus
+      interval: 10s
+      honorLabels: true

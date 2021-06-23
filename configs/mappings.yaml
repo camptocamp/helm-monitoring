@@ -1,0 +1,147 @@
+defaults:
+  timer_type: summary
+  match_type: regex
+  glob_disable_ordering: false
+  ttl: 24h
+
+mappings:
+  # prometheus doesn't like having the same metrics with a different number of labels.
+  # Therefore, we have to map those to special metrics
+
+  - match: "^route$"
+    match_metric_type: timer
+    name: statsd_route_seconds
+
+  - match: "^render$"
+    match_metric_type: timer
+    name: statsd_render_seconds
+
+  - match: "^redis$"
+    match_metric_type: timer
+    name: statsd_redis_seconds
+
+  - match: "^sql\\.manual\\.health_check\\.alembic$"
+    match_metric_type: timer
+    name: statsd_sql_health_check_alembic_seconds
+
+  - match: "^sql\\.manual\\.health_check\\.db$"
+    match_metric_type: timer
+    name: statsd_sql_health_check_db_seconds
+
+  - match: "^sql$"
+    match_metric_type: timer
+    name: statsd_sql_seconds
+
+  - match: "^sql\\.commit$"
+    match_metric_type: timer
+    name: statsd_sql_commit_seconds
+
+  - match: "^requests$"
+    match_metric_type: timer
+    name: statsd_requests_seconds
+
+  - match: "^version$"
+    match_metric_type: gauge
+    name: statsd_version
+
+  - match: "^version$"
+    match_metric_type: counter
+    name: statsd_version
+
+  - match: "^alembic_version$"
+    match_metric_type: counter
+    name: statsd_alembic_version
+
+  - match: "^health_check$"
+    match_metric_type: counter
+    name: statsd_health_check
+
+  - match: "^dbstats\\.size$"
+    match_metric_type: gauge
+    name: statsd_dbstats_size
+
+  - match: "^dbstats\\.count$"
+    match_metric_type: gauge
+    name: statsd_dbstats_count
+
+  - match: "^dbstats\\.(.*)$"
+    match_metric_type: gauge
+    name: statsd_dbstats
+    labels:
+      metric: "$1"
+
+  {{- if .Values.elasticsearch.enabled }}
+  - match: "^es\\.max_age$"
+    match_metric_type: gauge
+    name: statsd_es_max_age
+    ttl: 20m
+
+  - match: "^es\\.roundtrip"
+    match_metric_type: gauge
+    name: statsd_es_roundtrip
+    ttl: 20m
+
+  - match: "^es\\.requests"
+    match_metric_type: timer
+    name: statsd_es_requests
+    ttl: 20m
+
+  - match: "^es\\.(.*)$"
+    match_metric_type: timer
+    name: statsd_es
+    labels:
+      metric: "$1"
+    ttl: 20m
+  {{- end }}
+
+  - match: "^([^.]+)\\.([^.]+)\\.gunicorn\\.(.*)$"
+    match_metric_type: timer
+    name: statsd_gunicorn_timer_seconds
+    labels:
+      chart: "c2cgeoportal"
+      service: "$1"
+      release: "$2"
+      metric: "$3"
+
+  - match: "^([^.]+)\\.([^.]+)\\.gunicorn\\.(.*)$"
+    match_metric_type: counter
+    name: statsd_gunicorn_counter
+    labels:
+      chart: "c2cgeoportal"
+      service: "$1"
+      release: "$2"
+      metric: "$3"
+
+  - match: "^cache\\.(.*)$"
+    match_metric_type: counter
+    name: statsd_cache
+    labels:
+      metric: "$1"
+    ttl: 120h
+
+  - match: "^([^\\.]+)\\.([^\\.]+)\\.([^\\.]+)\\.(.*)$"
+    match_metric_type: gauge
+    name: statsd_print
+    ttl: 60s
+    labels:
+      chart: "$1"
+      release: "$2"
+      pod_name: "$3"
+      metric: "$4"
+  # generic metrics
+
+  - match: "(.*)"
+    match_metric_type: counter
+    name: statsd_counter
+    labels: &generic_labels
+      statsd: "$1"
+
+  - match: "(.*)"
+    match_metric_type: timer
+    name: statsd_timer_seconds
+    labels: *generic_labels
+
+  - match: "(.*)"
+    match_metric_type: gauge
+    name: statsd_gauge
+    labels: *generic_labels

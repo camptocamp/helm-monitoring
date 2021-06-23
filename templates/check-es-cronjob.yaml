@@ -1,0 +1,53 @@
+{{- if .Values.elasticsearch.enabled }}
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ template "monitoring.fullname" . }}-check-es-cron
+  labels: &labels
+    app: {{ template "monitoring.fullname" . }}
+    chart: {{ template "monitoring.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    service: check-es
+spec:
+  schedule: "*/15 * * * *"
+  successfulJobsHistoryLimit: 0
+  failedJobsHistoryLimit: 1
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:  # POD level
+        metadata:
+          labels: *labels
+        spec:
+          containers:
+            - name: check-es
+              image: ghcr.io/camptocamp/c2cwsgiutils:4
+              imagePullPolicy: Always
+              env:
+              {{- range $name, $value := .Values.elasticsearch.env }}
+                - name: {{ $name | quote }}
+                  value: {{ $value | quote }}
+              {{- end }}
+                - name: STATSD_ADDRESS
+                  value: {{ template "monitoring.fullname" . }}-statsd:9125
+                - name: STATSD_TAG_CHART
+                  value: {{ .Chart.Name }}
+                - name: STATSD_TAG_RELEASE
+                  value: {{ .Release.Name }}
+                - name: LOG_TIMEOUT
+                  value: {{ .Values.elasticsearch.logTimeout | quote}}
+                - name: ES_URL
+                  value: {{ .Values.elasticsearch.url }}
+                - name: ES_INDEXES
+                  value: {{ .Values.elasticsearch.indexes }}
+                {{- if .Values.elasticsearch.auth }}
+                - name: ES_AUTH
+                  value: "Basic {{ (printf "%s:%s" .Values.elasticsearch.auth.user .Values.elasticsearch.auth.password) | b64enc }}"
+                {{- end }}
+              args:
+                - c2cwsgiutils-check-es
+              {{- include "common.containerConfig" (dict "service" .Values.elasticsearch "root" .) | indent 14 }}
+          restartPolicy: Never
+{{- end }}

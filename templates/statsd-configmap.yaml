@@ -1,0 +1,14 @@
+{{- if .Values.statsd.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "monitoring.fullname" . }}-statsd
+  labels:
+    app: {{ template "monitoring.fullname" . }}
+    chart: {{ template "monitoring.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  mappings.yaml: |
+{{ tpl (.Files.Get "configs/mappings.yaml") . | indent 4 }}
+{{- end }}

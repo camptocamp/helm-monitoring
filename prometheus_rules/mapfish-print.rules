@@ -1,0 +1,67 @@
+groups:
+  - name: geo_status_print_{{.Release.Namespace}}
+    rules:
+      - record: geo_federation:status_k8s
+        labels:
+          kind: print_gc
+        expr: |
+          (
+            max by (namespace, chart, release) (
+              # if we take more than 50% of the time doing GC
+              sum by (namespace, chart, release, pod_name) (
+                rate(
+                  statsd_print{namespace="{{.Release.Namespace}}", metric=~"print\\.jvm-gc.*\\.time"}[{{ .Values.resolution }}]
+                )
+              ) > bool 500 * 1
+              +
+              # if we take more than 95% of the time doing GC
+              sum by (namespace, chart, release, pod_name) (
+                rate(
+                  statsd_print{namespace="{{.Release.Namespace}}", metric=~"print\\.jvm-gc.*\\.time"}[{{ .Values.resolution }}]
+                )
+              ) > bool 950 * 9
+            )
+          ) * 1
+
+      - record: geo_federation:status_k8s
+        labels:
+          kind: print_errors
+        expr: |
+          sum by (namespace, chart, release) (
+            increase(
+              statsd_print{namespace="{{.Release.Namespace}}", metric=~"print\\.org\\.mapfish\\.print\\..*\\.error"}[{{ .Values.resolution }}]
+            )
+          ) > bool 0 * 1
+          or
+          # just to have the entry when there is no error
+          sum by (namespace, chart, release) (
+            statsd_print{namespace="{{.Release.Namespace}}"}
+          ) * 0
+
+      - record: geo_federation:status_k8s
+        labels:
+          kind: print_overflows
+        expr: |
+          sum by (namespace, chart, release) (
+            increase(
+              statsd_print{namespace="{{.Release.Namespace}}", metric=~"print\\.org\\.mapfish\\.print\\..*\\.queue_overflow"}[{{ .Values.resolution }}]
+            )
+          ) > bool 0 * 1
+          or
+          # just to have the entry when there is no error
+          sum by (namespace, chart, release) (
+            statsd_print{namespace="{{.Release.Namespace}}"}
+          ) * 0
+
+      - record: geo_federation:status_k8s
+        labels:
+          kind: print_queue_times
+        expr: |
+          avg by (namespace, chart, release) (
+            statsd_print{namespace="{{.Release.Namespace}}", metric=~"print\\.org\\.mapfish\\.print\\..*\\.wait\\.mean"}
+          ) > bool {{.Values.print.maxWaitSeconds}}*1000 * 1
+          or
+          # just to have the entry when there is no error
+          sum by (namespace, chart, release) (
+            statsd_print{namespace="{{.Release.Namespace}}"}
+          ) * 0

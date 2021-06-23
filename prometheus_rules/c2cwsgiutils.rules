@@ -1,0 +1,117 @@
+groups:
+  - name: geo_status_c2cwsgiutils_{{.Release.Namespace}}
+    rules:
+      - record: geo_federation:status_k8s
+        labels:
+          kind: health_check_fail
+        expr: |
+          max by (namespace, chart, release) (
+            (
+              increase(
+                statsd_route_seconds_count{namespace="{{.Release.Namespace}}", route="c2c_health_check", group="5"}[{{ .Values.resolution }}]
+              )
+            ) > bool 0 * 10
+            or
+            # just to have the entry when there is no error
+            statsd_route_seconds_count{namespace="{{.Release.Namespace}}", route="c2c_health_check"} * 0
+          )
+
+      - record: geo_federation:status_k8s
+        labels:
+          kind: slow_sql
+        expr: |
+          max by (namespace, chart, release) (
+            max_over_time(
+              statsd_sql_seconds{namespace="{{.Release.Namespace}}", quantile="0.99"}[{{ .Values.resolution }}]
+            )
+          ) > bool {{ .Values.c2cwsgiutils.slowSqlSeconds }}
+
+      - record: geo_federation:const_k8s
+        labels:
+          kind: slow_sql
+        expr: |
+          max by (namespace) (
+            statsd_route_seconds_count{namespace="{{.Release.Namespace}}"} > bool 0
+          ) * {{.Values.c2cwsgiutils.slowSqlSeconds}}
+
+      - record: geo_federation:status_k8s
+        labels:
+          kind: versions
+        expr: |
+          max by (namespace, chart, release) (
+            (
+              count by (namespace, chart, release, service) (
+                increase(statsd_version{namespace="{{.Release.Namespace}}"}[{{ .Values.resolution }}]) > 0
+              ) > bool 1
+            ) * 1
+          )
+
+      - record: geo_federation:status_k8s
+        labels:
+          kind: slow_fetches
+        expr: |
+          max by (namespace, chart, release) (
+            (
+              max_over_time(
+                statsd_requests_seconds{quantile="0.99", namespace="{{.Release.Namespace}}"}[{{.Values.resolution}}]
+              ) > bool {{.Values.c2cwsgiutils.slowFetchSeconds}}
+            ) * 1
+          )
+
+      - record: geo_federation:const_k8s
+        labels:
+          kind: slow_fetch
+        expr: |
+          max by (namespace) (
+            statsd_route_seconds_count{namespace="{{.Release.Namespace}}"} > bool 0
+          ) * {{.Values.c2cwsgiutils.slowFetchSeconds}}
+
+      - record: geo_federation:status_k8s
+        labels:
+          kind: slow_routes
+        expr: |
+          max by (namespace, chart, release) (
+            (
+              max_over_time(
+                statsd_route_seconds{quantile="0.99", namespace="{{.Release.Namespace}}"}[{{.Values.resolution}}]
+              ) > bool {{.Values.c2cwsgiutils.slowRouteSeconds}}
+            ) * 1
+          )
+
+      - record: geo_federation:const_k8s
+        labels:
+          kind: slow_routes
+        expr: |
+          max by (namespace) (
+            statsd_route_seconds_count{namespace="{{.Release.Namespace}}"} > bool 0
+          ) * {{.Values.c2cwsgiutils.slowRouteSeconds}}
+
+      - record: geo_federation:status_k8s
+        labels:
+          kind: tilecloud_errors
+        expr: |
+          max by (namespace, chart, release) (
+            (
+              increase(
+                statsd_counter{namespace="{{.Release.Namespace}}", service="tilecloudchain", statsd=~"error\\..*"}[{{.Values.resolution}}]
+              ) > bool 0
+            )
+            or
+            # just to have the entry when there is no error
+            statsd_timer_seconds_count{namespace="{{.Release.Namespace}}", service="tilecloudchain"} * 0
+          )
+
+      - record: geo_federation:status_k8s
+        labels:
+          kind: scm_errors
+        expr: |
+          max by (namespace, chart, release) (
+            (
+              increase(
+                statsd_counter{namespace="{{.Release.Namespace}}", service=~".*_config|config_api", statsd=~".*error"}[{{.Values.resolution}}]
+              ) > bool 0
+            )
+            or
+            # just to have the entry when there is no error
+            statsd_timer_seconds_count{namespace="{{.Release.Namespace}}", service=~".*_config|config_api"} * 0
+          )

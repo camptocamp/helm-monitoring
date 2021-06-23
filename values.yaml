@@ -1,0 +1,138 @@
+---
+# Default values for monitoring.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+statsd:
+  enabled: true
+  log_level: info
+  image:
+    name: prom/statsd-exporter
+    tag: v0.17.0
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: 5.0m
+      memory: 10.6Mi
+    limits:
+      memory: 120Mi
+
+resolution: 5m
+
+c2cwsgiutils:
+  enabled: true
+  slowSqlSeconds: 10
+  slowFetchSeconds: 20
+  slowRouteSeconds: 90
+
+print:
+  enabled: false
+  maxWaitSeconds: 10
+
+apache:
+  enabled: false
+
+elasticsearch:
+  enabled: false
+  url: https://elasticsearch.logs.camptocamp.com/
+  indexes: openshift-ch-1-gs-mutualized-print-*
+  logTimeout: 120 # seconds before which a log must appear on ElasticSearch
+  auth:
+    user: ''
+    password: ''
+  maxAge: 15 # minutes
+  env:
+    C2CWSGIUTILS_CHECK_ES_TRYNUMBER: '10'
+    C2CWSGIUTILS_CHECK_ES_SLEEP: '30'
+    STATSD_PREFIX: es
+    STATSD_USE_TAGS: '1'
+    LOG_TYPE: json
+    LOG_LEVEL: INFO
+    C2C_REQUESTS_DEFAULT_TIMEOUT: '30'
+
+  resources:
+    requests:
+      cpu: 3m
+      memory: 34.1Mi
+    limits:
+      memory: 64Mi
+
+global:
+  enabled: false
+  project:
+    resolution: 2m
+  disk:
+    warning: 90
+    error: 92
+
+kubernetes:
+  containers:
+    maxMemUsagePercent: 90
+    maxCpuUsagePercent: 200
+    maxReadyTime: 5m
+  charts:
+    - c2cgeoportal
+    - monitoring
+    - cache
+    - redis
+  ignoredPods:
+    - dbstats
+    - cron
+
+process_ooms:
+  enabled: true
+  image:
+    name: camptocamp/es-ooms-exporter
+    tag: latest
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      memory: 80Mi
+    requests:
+      memory: 52.5Mi
+      cpu: 11m
+
+cache:
+  enabled: true
+
+postgresql:
+  enabled: false
+  hosts:
+    master:
+      # A secret with password, username, hostname, hostnameSlave, database
+      secret: secrets-postgresql-prod
+      addressKey: hostname
+    slave:
+      secret: secrets-postgresql-prod
+      addressKey: hostnameSlave
+    master-12:
+      secret: secrets-postgresql-prod-12
+      addressKey: hostname
+    slave-12:
+      secret: secrets-postgresql-prod-12
+      addressKey: hostnameSlave
+  connections:
+    warning: 0.80
+    error: 0.90
+  replication:
+    period: 10m
+    maxLag: '10'
+  image:
+    repository: wrouesnel/postgres_exporter
+    tag: v0.8.0
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: 1m
+      memory: 4Mi
+    limits:
+      memory: 20Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+openshift: true
+revisionHistoryLimit: 1
