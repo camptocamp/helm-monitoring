@@ -1,42 +1,39 @@
 {{- if .Values.statsd.enabled }}
 apiVersion: apps/v1
 kind: Deployment
+
 metadata:
-  name: {{ include "monitoring.fullname" . }}-statsd
-  labels:
-    app: {{ template "monitoring.fullname" . }}
-    chart: {{ template "monitoring.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-    service: statsd
+  name: {{ include "common.fullname" ( dict "root" . "service" .Values.statsd ) }}
+  labels: {{ include "common.labels" ( dict "root" . "service" .Values.statsd ) | nindent 4 }}
+  annotations: {{- toYaml .Values.statsd.annotations | nindent 4 }}
 spec:
   replicas: 1
-  selector:
-    matchLabels:
-      app: {{ template "monitoring.fullname" . }}
-      release: {{ .Release.Name }}
-      service: statsd
   strategy:
     type: RollingUpdate
+  selector:
+    matchLabels: {{- include "common.selectorLabels" ( dict "root" . "service" .Values.statsd ) | nindent 6 }}
   template:
     metadata:
-      labels:
-        app: {{ template "monitoring.fullname" . }}
-        release: {{ .Release.Name }}
-        service: statsd
-    spec:
+      labels: {{- include "common.selectorLabels" ( dict "root" . "service" .Values.statsd ) | nindent 8 }}
+    spec: {{- include "common.podConfig" ( dict
+          "root" .
+          "service" .Values.statsd
+          "affinitySelector" (dict
+            "app.kubernetes.io/instance" .Release.Name
+            "app.kubernetes.io/name" ( include "common.name" ( dict "root" . "service" .Values.statsd ) )
+            "app.kubernetes.io/component" "main"
+          )) | nindent 6 }}
       volumes:
         - name: mappings-volume
           configMap:
-            name: {{ include "monitoring.fullname" . }}-statsd
+            name: {{ include "common.fullname" ( dict "root" . "service" .Values.statsd ) }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: statd
+          {{- include "common.containerConfig" ( dict "root" . "container" .Values.statsd ) | nindent 10 }}
           args:
             - --statsd.mapping-config=/etc/statsd/mappings.yaml
             - --log.level={{ .Values.statsd.log_level }}
             - --statsd.listen-tcp=
-          image: "{{ .Values.statsd.image.name }}:{{ .Values.statsd.image.tag }}"
-          imagePullPolicy: {{ .Values.statsd.image.pullPolicy }}
           volumeMounts:
             - mountPath: /etc/statsd
               name: mappings-volume
@@ -51,18 +48,5 @@ spec:
             httpGet:
               path: /metrics
               port: http
-          {{- include "common.containerConfig" (dict "service" .Values.statsd "root" .) | indent 10 }}
-    {{- with .Values.nodeSelector }}
-      nodeSelector:
-{{ toYaml . | indent 8 }}
-    {{- end }}
-    {{- with .Values.affinity }}
-      affinity:
-{{ toYaml . | indent 8 }}
-    {{- end }}
-    {{- with .Values.tolerations }}
-      tolerations:
-{{ toYaml . | indent 8 }}
-    {{- end }}
-  revisionHistoryLimit: 1
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
 {{- end }}

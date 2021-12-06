@@ -1,12 +1,8 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "monitoring.fullname" . }}-service-monitor
-  labels:
-    app: {{ template "monitoring.fullname" . }}
-    chart: {{ template "monitoring.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+  name: {{ include "common.fullname" ( dict "root" . "service" .Values ) }}
+  labels: {{ include "common.labels" ( dict "root" . "service" .Values ) | nindent 4 }}
 spec:
   selector:
     matchLabels:

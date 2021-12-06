@@ -1,3 +1,1 @@
 Monitoring installed.
-
-Statsd can be reached at this UDP address: {{ template "monitoring.fullname" . }}-statsd:9125

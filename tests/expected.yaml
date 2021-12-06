@@ -1,0 +1,1536 @@
+---
+# Source: monitoring/templates/process-ooms-serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mapserver-monitoring-ooms
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: ooms
+---
+# Source: monitoring/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+type: Generic
+metadata:
+  name: mapserver-monitoring-env
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: main
+data:
+  ES_AUTH: "UW1GemFXTWdZV0U2WW1JPQ=="
+---
+# Source: monitoring/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mapserver-monitoring-env
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: main
+data:
+  CHART_NAME: monitoring
+  RELEASE_NAME: mapserver
+  RELEASE_NAMESPACE: default
+---
+# Source: monitoring/templates/statsd-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mapserver-monitoring
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: main
+data:
+  mappings.yaml: |
+    defaults:
+      timer_type: summary
+      match_type: regex
+      glob_disable_ordering: false
+      ttl: 24h
+
+    mappings:
+      # prometheus doesn't like having the same metrics with a different number of labels.
+      # Therefore, we have to map those to special metrics
+
+      - match: "^route$"
+        match_metric_type: timer
+        name: statsd_route_seconds
+
+      - match: "^render$"
+        match_metric_type: timer
+        name: statsd_render_seconds
+
+      - match: "^redis$"
+        match_metric_type: timer
+        name: statsd_redis_seconds
+
+      - match: "^sql\\.manual\\.health_check\\.alembic$"
+        match_metric_type: timer
+        name: statsd_sql_health_check_alembic_seconds
+
+      - match: "^sql\\.manual\\.health_check\\.db$"
+        match_metric_type: timer
+        name: statsd_sql_health_check_db_seconds
+
+      - match: "^sql$"
+        match_metric_type: timer
+        name: statsd_sql_seconds
+
+      - match: "^sql\\.commit$"
+        match_metric_type: timer
+        name: statsd_sql_commit_seconds
+
+      - match: "^requests$"
+        match_metric_type: timer
+        name: statsd_requests_seconds
+
+      - match: "^version$"
+        match_metric_type: gauge
+        name: statsd_version
+
+      - match: "^version$"
+        match_metric_type: counter
+        name: statsd_version
+
+      - match: "^alembic_version$"
+        match_metric_type: counter
+        name: statsd_alembic_version
+
+      - match: "^health_check$"
+        match_metric_type: counter
+        name: statsd_health_check
+
+      - match: "^dbstats\\.size$"
+        match_metric_type: gauge
+        name: statsd_dbstats_size
+
+      - match: "^dbstats\\.count$"
+        match_metric_type: gauge
+        name: statsd_dbstats_count
+
+      - match: "^dbstats\\.(.*)$"
+        match_metric_type: gauge
+        name: statsd_dbstats
+        labels:
+          metric: "$1"
+      - match: "^es\\.max_age$"
+        match_metric_type: gauge
+        name: statsd_es_max_age
+        ttl: 20m
+
+      - match: "^es\\.roundtrip"
+        match_metric_type: gauge
+        name: statsd_es_roundtrip
+        ttl: 20m
+
+      - match: "^es\\.requests"
+        match_metric_type: timer
+        name: statsd_es_requests
+        ttl: 20m
+
+      - match: "^es\\.(.*)$"
+        match_metric_type: timer
+        name: statsd_es
+        labels:
+          metric: "$1"
+        ttl: 20m
+
+      - match: "^([^.]+)\\.([^.]+)\\.gunicorn\\.(.*)$"
+        match_metric_type: timer
+        name: statsd_gunicorn_timer_seconds
+        labels:
+          chart: "c2cgeoportal"
+          service: "$1"
+          release: "$2"
+          metric: "$3"
+
+      - match: "^([^.]+)\\.([^.]+)\\.gunicorn\\.(.*)$"
+        match_metric_type: counter
+        name: statsd_gunicorn_counter
+        labels:
+          chart: "c2cgeoportal"
+          service: "$1"
+          release: "$2"
+          metric: "$3"
+
+      - match: "^cache\\.(.*)$"
+        match_metric_type: counter
+        name: statsd_cache
+        labels:
+          metric: "$1"
+        ttl: 120h
+
+      - match: "^([^\\.]+)\\.([^\\.]+)\\.([^\\.]+)\\.(.*)$"
+        match_metric_type: gauge
+        name: statsd_print
+        ttl: 60s
+        labels:
+          chart: "$1"
+          release: "$2"
+          pod_name: "$3"
+          metric: "$4"
+      # generic metrics
+
+      - match: "(.*)"
+        match_metric_type: counter
+        name: statsd_counter
+        labels: &generic_labels
+          statsd: "$1"
+
+      - match: "(.*)"
+        match_metric_type: timer
+        name: statsd_timer_seconds
+        labels: *generic_labels
+
+      - match: "(.*)"
+        match_metric_type: gauge
+        name: statsd_gauge
+        labels: *generic_labels
+---
+# Source: monitoring/templates/process-ooms-serviceaccount.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: mapserver-monitoring-ooms
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: ooms
+rules:
+  - apiGroups: ["apps/v1"]
+    resources: ["pods"]
+    verbs: ["list"]
+  - apiGroups: ["v1"]
+    resources: ["ns"]
+    verbs: ["list"]
+---
+# Source: monitoring/templates/process-ooms-serviceaccount.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: mapserver-monitoring-ooms
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: ooms
+subjects:
+  - kind: ServiceAccount
+    name: mapserver-monitoring-ooms
+roleRef:
+  kind: Role
+  name: mapserver-monitoring-ooms
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: monitoring/templates/process-ooms-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mapserver-monitoring-ooms
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: ooms
+    prometheus: "true"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9102
+      targetPort: http
+      protocol: TCP
+      name: prometheus
+  selector:
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: ooms
+---
+# Source: monitoring/templates/statsd-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mapserver-monitoring
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: main
+    prometheus: "true"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9125
+      targetPort: statsd
+      protocol: UDP
+      name: statsd
+    - port: 9102
+      targetPort: http
+      protocol: TCP
+      name: prometheus
+  selector:
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: main
+---
+# Source: monitoring/templates/process-ooms-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mapserver-monitoring-ooms
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: ooms
+  annotations:
+    null
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: monitoring
+      app.kubernetes.io/instance: mapserver
+      app.kubernetes.io/component: ooms
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: monitoring
+        app.kubernetes.io/instance: mapserver
+        app.kubernetes.io/component: ooms
+    spec:
+
+      serviceAccountName: full
+      securityContext:
+        null
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app.kubernetes.io/component
+                operator: In
+                values:
+                - main
+              - key: app.kubernetes.io/instance
+                operator: In
+                values:
+                - mapserver
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                - monitoring
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: process-ooms
+          securityContext:
+            null
+          image: ":latest"
+          imagePullPolicy: IfNotPresent
+          env:
+              - name: "C2CWSGIUTILS_CHECK_ES_SLEEP"
+                value: "30"
+              - name: "C2CWSGIUTILS_CHECK_ES_TRYNUMBER"
+                value: "10"
+              - name: "C2C_REQUESTS_DEFAULT_TIMEOUT"
+                value: "30"
+              - name: "ES_AUTH"
+                valueFrom:
+                  secretKeyRef:
+                    name: "secret-env"
+                    key: "ES_AUTH"
+              - name: "ES_INDEXES"
+                value: "openshift-ch-1-*"
+              - name: "ES_URL"
+                value: "https://elasticsearch.logs.camptocamp.com/"
+              - name: "LOG_LEVEL"
+                value: "INFO"
+              - name: "LOG_TYPE"
+                value: "json"
+              - name: "NAMESPACE"
+                valueFrom:
+                  configMapKeyRef:
+                    name: "env"
+                    key: "RELEASE_NAMESPACE"
+              - name: "STATSD_PREFIX"
+                value: "es"
+              - name: "STATSD_USE_TAGS"
+                value: "1"
+          terminationMessagePolicy: FallbackToLogsOnError
+          resources:
+            limits:
+              memory: 80Mi
+            requests:
+              cpu: 11m
+              memory: 52.5Mi
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          securityContext:
+            runAsNonRoot: true
+  revisionHistoryLimit: 1
+---
+# Source: monitoring/templates/statsd-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: mapserver-monitoring
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: main
+  annotations:
+    null
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: monitoring
+      app.kubernetes.io/instance: mapserver
+      app.kubernetes.io/component: main
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: monitoring
+        app.kubernetes.io/instance: mapserver
+        app.kubernetes.io/component: main
+    spec:
+
+      serviceAccountName: full
+      securityContext:
+        null
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app.kubernetes.io/component
+                operator: In
+                values:
+                - main
+              - key: app.kubernetes.io/instance
+                operator: In
+                values:
+                - mapserver
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                - monitoring
+            topologyKey: "kubernetes.io/hostname"
+      volumes:
+        - name: mappings-volume
+          configMap:
+            name: mapserver-monitoring
+      containers:
+        - name: statd
+          securityContext:
+            null
+          image: ":v0.17.0"
+          imagePullPolicy: IfNotPresent
+          terminationMessagePolicy: FallbackToLogsOnError
+          resources:
+            limits:
+              memory: 120Mi
+            requests:
+              cpu: 5.0m
+              memory: 10.6Mi
+          args:
+            - --statsd.mapping-config=/etc/statsd/mappings.yaml
+            - --log.level=info
+            - --statsd.listen-tcp=
+          volumeMounts:
+            - mountPath: /etc/statsd
+              name: mappings-volume
+          ports:
+            - name: statsd
+              containerPort: 9125
+              protocol: UDP
+            - name: http
+              containerPort: 9102
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: http
+  revisionHistoryLimit: 1
+---
+# Source: monitoring/templates/prometheus-rules.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: mapserver-monitoring
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: main
+    prometheus: example
+    role: alert-rules
+spec:
+  groups:
+    - name: geo_status_kubernetes_default
+      rules:
+        - record: geo_federation:status_k8s
+          labels:
+            kind: container_ram_usage
+          expr: |
+            max by (namespace, chart, release) (
+              label_replace(
+                label_replace(
+                  label_replace(
+                    label_replace(
+                      label_replace(
+                        (
+                          container_memory_rss{namespace="default", container_name=~".+", pod_name=~".*(?:c2cgeoportal|monitoring|cache|redis)-.*"}
+                          /
+                          (container_spec_memory_limit_bytes > 0)
+                        ),
+                        "chart", "$1$2", "pod_name", ".*-(c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                      ),
+                      "release", "$1$2$3", "pod_name", ".*-(redis)-.*|(.*)-(?:c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                    ),
+                    "chart", "${1}_$2", "chart", "([^-]+)-([^-]+)"
+                  ),
+                  "release", "${1}_$2", "release", "([^-]+)-([^-]+)"
+                ),
+                "release", "${1}_${2}_$3", "release", "([^-]+)-([^-]+)-([^-]+)"
+              )
+            ) * 100 > bool 90
+
+        - record: geo_federation:const_k8s
+          labels:
+            kind: container_ram_usage
+          expr: |
+            max by (namespace) (
+              container_spec_memory_limit_bytes{namespace="default"} > bool 0
+            ) * 90
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: container_cpu_usage
+          expr: |
+            max by (namespace, chart, release) (
+              label_replace(
+                label_replace(
+                  label_replace(
+                    label_replace(
+                      label_replace(
+                        rate(
+                          container_cpu_usage_seconds_total{namespace="default", container_name=~".+", pod_name=~".*(?:c2cgeoportal|monitoring|cache|redis)-.*"}[5m]
+                        ),
+                        "chart", "$1$2", "pod_name", ".*-(c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                      ),
+                      "release", "$1$2$3", "pod_name", ".*-(redis)-.*|(.*)-(?:c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                    ),
+                    "chart", "${1}_$2", "chart", "([^-]+)-([^-]+)"
+                  ),
+                  "release", "${1}_$2", "release", "([^-]+)-([^-]+)"
+                ),
+                "release", "${1}_${2}_$3", "release", "([^-]+)-([^-]+)-([^-]+)"
+              )
+            ) * 100 > bool 200
+
+        - record: geo_federation:const_k8s
+          labels:
+            kind: container_cpu_usage
+          expr: |
+            max by (namespace) (
+              container_spec_memory_limit_bytes{namespace="default"} > bool 0
+            ) * 200
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: pod_restarts
+          expr: |
+            (
+              max by (namespace, chart, release) (
+                label_replace(
+                  label_replace(
+                    label_replace(
+                      label_replace(
+                        label_replace(
+                          kube_pod_container_status_waiting_reason{reason!="ContainerCreating", namespace="default", pod=~".*-(?:c2cgeoportal|monitoring|cache|redis)-.*", pod!~".*(?:dbstats|cron)-.*"} > 0,
+                          "chart", "$1$2", "pod", ".*-(c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                        ),
+                        "release", "$1$2$3", "pod", ".*-(redis)-.*|(.*)-(?:c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                      ),
+                      "chart", "${1}_$2", "chart", "([^-]+)-([^-]+)"
+                    ),
+                    "release", "${1}_$2", "release", "([^-]+)-([^-]+)"
+                  ),
+                  "release", "${1}_${2}_$3", "release", "([^-]+)-([^-]+)-([^-]+)"
+                )
+              ) > bool 0
+            ) * 10
+            or
+            (
+              max by (namespace, chart, release) (
+                label_replace(
+                  label_replace(
+                    label_replace(
+                      label_replace(
+                        label_replace(
+                          (
+                            kube_pod_container_status_waiting_reason{reason="ContainerCreating", namespace="default", pod=~".*(?:c2cgeoportal|monitoring|cache|redis)-.*", pod!~".*-(?:dbstats|cron)-.*"}
+                            and
+                            kube_pod_container_status_waiting_reason{reason="ContainerCreating", namespace="default", pod=~".*(?:c2cgeoportal|monitoring|cache|redis)-.*", pod!~".*-(?:dbstats|cron)-.*"} offset 5m
+                          ) > 0,
+                          "chart", "$1$2", "pod", ".*-(c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                        ),
+                        "release", "$1$2$3", "pod", ".*-(redis)-.*|(.*)-(?:c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                      ),
+                      "chart", "${1}_$2", "chart", "([^-]+)-([^-]+)"
+                    ),
+                    "release", "${1}_$2", "release", "([^-]+)-([^-]+)"
+                  ),
+                  "release", "${1}_${2}_$3", "release", "([^-]+)-([^-]+)-([^-]+)"
+                )
+              ) > bool 0
+            ) * 1
+            or
+            (
+              max by (namespace, chart, release) (
+                label_replace(
+                  label_replace(
+                    label_replace(
+                      label_replace(
+                        label_replace(
+                          kube_pod_container_status_waiting_reason{namespace="default", pod=~".*(?:c2cgeoportal|monitoring|cache|redis)-.*"},
+                          "chart", "$1$2", "pod", ".*-(c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                        ),
+                        "release", "$1$2$3", "pod", ".*-(redis)-.*|(.*)-(?:c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                      ),
+                      "chart", "${1}_$2", "chart", "([^-]+)-([^-]+)"
+                    ),
+                    "release", "${1}_$2", "release", "([^-]+)-([^-]+)"
+                  ),
+                  "release", "${1}_${2}_$3", "release", "([^-]+)-([^-]+)-([^-]+)"
+                )
+              )
+            ) * 0
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: deployment_errors
+          expr: |
+            (
+              max by (namespace, chart, release) (
+                label_replace(
+                  label_replace(
+                    label_replace(
+                      label_replace(
+                        label_replace(
+                          kube_replicaset_spec_replicas{namespace="default", replicaset=~".*(?:c2cgeoportal|monitoring|cache|redis)-.*"}
+                          != bool
+                          kube_replicaset_status_replicas,
+                          "chart", "$1$2", "replicaset", ".*-(c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                        ),
+                        "release", "$1$2$3", "replicaset", ".*-(redis)-.*|(.*)-(?:c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                      ),
+                      "chart", "${1}_$2", "chart", "([^-]+)-([^-]+)"
+                    ),
+                    "release", "${1}_$2", "release", "([^-]+)-([^-]+)"
+                  ),
+                  "release", "${1}_${2}_$3", "release", "([^-]+)-([^-]+)-([^-]+)"
+                )
+              )
+            ) * 10
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: pod_errors
+          expr: |
+            (
+              max by (namespace, chart, release) (
+                label_replace(
+                  label_replace(
+                    label_replace(
+                      label_replace(
+                        label_replace(
+                          kube_pod_container_status_terminated_reason{reason!="Completed", namespace="default", pod=~".*(?:c2cgeoportal|monitoring|cache|redis)-.*"} > 0,
+                          "chart", "$1$2", "pod", ".*-(c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                        ),
+                        "release", "$1$2$3", "pod", ".*-(redis)-.*|(.*)-(?:c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                      ),
+                      "chart", "${1}_$2", "chart", "([^-]+)-([^-]+)"
+                    ),
+                    "release", "${1}_$2", "release", "([^-]+)-([^-]+)"
+                  ),
+                  "release", "${1}_${2}_$3", "release", "([^-]+)-([^-]+)-([^-]+)"
+                )
+              ) > bool 0
+            ) * 10
+            or
+            (
+              max by (namespace, chart, release) (
+                label_replace(
+                  label_replace(
+                    label_replace(
+                      label_replace(
+                        label_replace(
+                          kube_pod_status_phase{phase="Failed", namespace="default", pod=~".*(?:c2cgeoportal|monitoring|cache|redis)-.*"} > 0,
+                          "chart", "$1$2", "pod", ".*-(c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                        ),
+                        "release", "$1$2$3", "pod", ".*-(redis)-.*|(.*)-(?:c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                      ),
+                      "chart", "${1}_$2", "chart", "([^-]+)-([^-]+)"
+                    ),
+                    "release", "${1}_$2", "release", "([^-]+)-([^-]+)"
+                  ),
+                  "release", "${1}_${2}_$3", "release", "([^-]+)-([^-]+)-([^-]+)"
+                )
+              ) > bool 0
+            ) * 10
+            or
+            (
+              max by (namespace, chart, release) (
+                label_replace(
+                  label_replace(
+                    label_replace(
+                      label_replace(
+                        label_replace(
+                          kube_pod_container_status_terminated_reason{namespace="default", pod=~".*(?:c2cgeoportal|monitoring|cache|redis)-.*"},
+                          "chart", "$1$2", "pod", ".*-(c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                        ),
+                        "release", "$1$2$3", "pod", ".*-(redis)-.*|(.*)-(?:c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                      ),
+                      "chart", "${1}_$2", "chart", "([^-]+)-([^-]+)"
+                    ),
+                    "release", "${1}_$2", "release", "([^-]+)-([^-]+)"
+                  ),
+                  "release", "${1}_${2}_$3", "release", "([^-]+)-([^-]+)-([^-]+)"
+                )
+              )
+            ) * 0
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: pod_ready
+          expr: |
+            (
+              max by (namespace, chart, release) (
+                label_replace(
+                  label_replace(
+                    label_replace(
+                      label_replace(
+                        label_replace(
+                          max_over_time(
+                            kube_pod_container_status_ready{
+                              namespace="default",
+                              pod=~".*-(?:c2cgeoportal|monitoring|cache|redis)-.*",
+                              pod!~".*(?:dbstats|cron)-.*"}[5m]
+                            ) == 0,
+                          "chart", "$1$2", "pod", ".*-(c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                        ),
+                        "release", "$1$2$3", "pod", ".*-(redis)-.*|(.*)-(?:c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                      ),
+                      "chart", "${1}_$2", "chart", "([^-]+)-([^-]+)"
+                    ),
+                    "release", "${1}_$2", "release", "([^-]+)-([^-]+)"
+                  ),
+                  "release", "${1}_${2}_$3", "release", "([^-]+)-([^-]+)-([^-]+)"
+                )
+              ) == bool 0
+            ) * 10
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: pod_process_oom
+          expr: |
+            (
+              sum by (namespace, chart, release) (
+                label_replace(
+                  label_replace(
+                    label_replace(
+                      label_replace(
+                        label_replace(
+                          max_over_time(
+                            pod_process_oom{namespace="default", pod=~".*(?:c2cgeoportal|monitoring|cache|redis)-.*"}[5m]
+                          )
+                          or
+                          (kube_pod_container_info{namespace="default", pod=~".*(?:c2cgeoportal|monitoring|cache|redis)-.*"} * 0)
+                          ,
+                          "chart", "$1$2", "pod", ".*-(c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                        ),
+                        "release", "$1$2$3", "pod", ".*-(redis)-.*|(.*)-(?:c2cgeoportal|monitoring|cache|redis)-.*|(c2cgeoportal|monitoring|cache|redis)-.*"
+                      ),
+                      "chart", "${1}_$2", "chart", "([^-]+)-([^-]+)"
+                    ),
+                    "release", "${1}_$2", "release", "([^-]+)-([^-]+)"
+                  ),
+                  "release", "${1}_${2}_$3", "release", "([^-]+)-([^-]+)-([^-]+)"
+                )
+              ) > bool 0
+            ) * 10
+---
+# Source: monitoring/templates/prometheus-rules.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: mapserver-monitoring
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: main
+    prometheus: example
+    role: alert-rules
+spec:
+  groups:
+    - name: geo_status_statsd_default
+      rules:
+        - record: geo_federation:status_k8s
+          labels:
+            kind: statsd_errors
+            chart: monitoring
+            release: mapserver
+          expr: |
+            (
+              sum by (namespace) (
+                increase(statsd_exporter_sample_errors_total{namespace="default"}[5m])
+              ) > bool 0 * 1
+              or
+              sum by (namespace) (
+                statsd_exporter_samples_total{namespace="default"}
+              ) * 0
+            ) + (
+              sum by (namespace) (
+                increase(statsd_exporter_tag_errors_total{namespace="default"}[5m])
+              ) > bool 0 * 1
+              or
+              sum by (namespace) (
+                statsd_exporter_samples_total{namespace="default"}
+              ) * 0
+            ) + (
+              sum by (namespace) (
+                increase(statsd_exporter_events_conflict_total{namespace="default"}[5m])
+              ) > bool 0 * 1
+              or
+              sum by (namespace) (
+                statsd_exporter_samples_total{namespace="default"}
+              ) * 0
+            ) + (
+              sum by (namespace) (
+                increase(statsd_exporter_events_unmapped_total{namespace="default"}[5m])
+              ) > bool 0 * 1
+              or
+              sum by (namespace) (
+                statsd_exporter_samples_total{namespace="default"}
+              ) * 0
+            )
+---
+# Source: monitoring/templates/prometheus-rules.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: mapserver-monitoring
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: main
+    prometheus: example
+    role: alert-rules
+spec:
+  groups:
+    - name: geo_status_c2cwsgiutils_default
+      rules:
+        - record: geo_federation:status_k8s
+          labels:
+            kind: health_check_fail
+          expr: |
+            max by (namespace, chart, release) (
+              (
+                increase(
+                  statsd_route_seconds_count{namespace="default", route="c2c_health_check", group="5"}[5m]
+                )
+              ) > bool 0 * 10
+              or
+              # just to have the entry when there is no error
+              statsd_route_seconds_count{namespace="default", route="c2c_health_check"} * 0
+            )
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: slow_sql
+          expr: |
+            max by (namespace, chart, release) (
+              max_over_time(
+                statsd_sql_seconds{namespace="default", quantile="0.99"}[5m]
+              )
+            ) > bool 10
+
+        - record: geo_federation:const_k8s
+          labels:
+            kind: slow_sql
+          expr: |
+            max by (namespace) (
+              statsd_route_seconds_count{namespace="default"} > bool 0
+            ) * 10
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: versions
+          expr: |
+            max by (namespace, chart, release) (
+              (
+                count by (namespace, chart, release, service) (
+                  increase(statsd_version{namespace="default"}[5m]) > 0
+                ) > bool 1
+              ) * 1
+            )
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: slow_fetches
+          expr: |
+            max by (namespace, chart, release) (
+              (
+                max_over_time(
+                  statsd_requests_seconds{quantile="0.99", namespace="default"}[5m]
+                ) > bool 20
+              ) * 1
+            )
+
+        - record: geo_federation:const_k8s
+          labels:
+            kind: slow_fetch
+          expr: |
+            max by (namespace) (
+              statsd_route_seconds_count{namespace="default"} > bool 0
+            ) * 20
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: slow_routes
+          expr: |
+            max by (namespace, chart, release) (
+              (
+                max_over_time(
+                  statsd_route_seconds{quantile="0.99", namespace="default"}[5m]
+                ) > bool 90
+              ) * 1
+            )
+
+        - record: geo_federation:const_k8s
+          labels:
+            kind: slow_routes
+          expr: |
+            max by (namespace) (
+              statsd_route_seconds_count{namespace="default"} > bool 0
+            ) * 90
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: tilecloud_errors
+          expr: |
+            max by (namespace, chart, release) (
+              (
+                increase(
+                  statsd_counter{namespace="default", service="tilecloudchain", statsd=~"error\\..*"}[5m]
+                ) > bool 0
+              )
+              or
+              # just to have the entry when there is no error
+              statsd_timer_seconds_count{namespace="default", service="tilecloudchain"} * 0
+            )
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: scm_errors
+          expr: |
+            max by (namespace, chart, release) (
+              (
+                increase(
+                  statsd_counter{namespace="default", service=~".*_config|config_api", statsd=~".*error"}[5m]
+                ) > bool 0
+              )
+              or
+              # just to have the entry when there is no error
+              statsd_timer_seconds_count{namespace="default", service=~".*_config|config_api"} * 0
+            )
+---
+# Source: monitoring/templates/prometheus-rules.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: mapserver-monitoring
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: main
+    prometheus: example
+    role: alert-rules
+spec:
+  groups:
+    - name: geo_status_print_default
+      rules:
+        - record: geo_federation:status_k8s
+          labels:
+            kind: print_gc
+          expr: |
+            (
+              max by (namespace, chart, release) (
+                # if we take more than 50% of the time doing GC
+                sum by (namespace, chart, release, pod_name) (
+                  rate(
+                    statsd_print{namespace="default", metric=~"print\\.jvm-gc.*\\.time"}[5m]
+                  )
+                ) > bool 500 * 1
+                +
+                # if we take more than 95% of the time doing GC
+                sum by (namespace, chart, release, pod_name) (
+                  rate(
+                    statsd_print{namespace="default", metric=~"print\\.jvm-gc.*\\.time"}[5m]
+                  )
+                ) > bool 950 * 9
+              )
+            ) * 1
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: print_errors
+          expr: |
+            sum by (namespace, chart, release) (
+              increase(
+                statsd_print{namespace="default", metric=~"print\\.org\\.mapfish\\.print\\..*\\.error"}[5m]
+              )
+            ) > bool 0 * 1
+            or
+            # just to have the entry when there is no error
+            sum by (namespace, chart, release) (
+              statsd_print{namespace="default"}
+            ) * 0
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: print_overflows
+          expr: |
+            sum by (namespace, chart, release) (
+              increase(
+                statsd_print{namespace="default", metric=~"print\\.org\\.mapfish\\.print\\..*\\.queue_overflow"}[5m]
+              )
+            ) > bool 0 * 1
+            or
+            # just to have the entry when there is no error
+            sum by (namespace, chart, release) (
+              statsd_print{namespace="default"}
+            ) * 0
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: print_queue_times
+          expr: |
+            avg by (namespace, chart, release) (
+              statsd_print{namespace="default", metric=~"print\\.org\\.mapfish\\.print\\..*\\.wait\\.mean"}
+            ) > bool 10*1000 * 1
+            or
+            # just to have the entry when there is no error
+            sum by (namespace, chart, release) (
+              statsd_print{namespace="default"}
+            ) * 0
+---
+# Source: monitoring/templates/prometheus-rules.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: mapserver-monitoring
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: main
+    prometheus: example
+    role: alert-rules
+spec:
+  groups:
+    - name: geo_status_global_default
+      rules:
+        - record: geo_federation:status_k8s
+          labels:
+            kind: disk_usage
+            chart: monitoring
+            release: prod
+            namespace: cluster
+          expr: |
+            max(
+              (1-node_filesystem_avail_bytes{mountpoint="/"}/node_filesystem_size_bytes)*100 > bool 90
+            )  * 1
+            +
+            max(
+              (1-node_filesystem_avail_bytes{mountpoint="/"}/node_filesystem_size_bytes)*100 > bool 92
+            ) * 9
+
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: ram_usage
+            chart: monitoring
+            release: prod
+            namespace: cluster
+          expr: |
+            max(
+              max by (node, cluster) (
+                label_replace(
+                  100 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100) > bool 80,
+                  "node", "$1", "instance", "(.*):.*"
+                )
+              )
+              and
+              max by (node, cluster) (
+                label_replace(
+                  kube_pod_info,
+                  "node", "$1", "host_ip", "(.*)"
+                )
+              )
+            ) * 1
+            +
+            max(
+              max by (node, cluster) (
+                label_replace(
+                  100 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100) > bool 90,
+                  "node", "$1", "instance", "(.*):.*"
+                )
+              )
+              and
+              max by (node, cluster) (
+                label_replace(
+                  kube_pod_info,
+                  "node", "$1", "host_ip", "(.*)"
+                )
+              )
+            ) * 9
+
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: cpu_load
+            chart: monitoring
+            release: prod
+            namespace: cluster
+          expr: |
+            (
+              max (
+                max by (host) (
+                  label_replace(
+                    node_load15,
+                    "host", "$1", "instance", "(.*):.*"
+                  )
+                )
+                /
+                max by (host) (
+                  label_replace(
+                    node:node_num_cpu:sum,
+                    "host", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+)\\..*"
+                  )
+                )
+              ) > bool 1.5
+            ) * 1
+            +
+            (
+              max (
+                max by (host) (
+                  label_replace(
+                    node_load15,
+                    "host", "$1", "instance", "(.*):.*"
+                  )
+                )
+                /
+                max by (host) (
+                  label_replace(
+                    node:node_num_cpu:sum,
+                    "host", "$1.$2.$3.$4", "node", "ip-(\\d+)-(\\d+)-(\\d+)-(\\d+)\\..*"
+                  )
+                )
+              ) > bool 3
+            ) * 9
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: project_quota
+            chart: monitoring
+            release: mapserver
+          expr: |
+            max by (namespace) (
+              sum by (namespace, resource) (
+                kube_resourcequota{type="used"}
+              )
+              /
+              sum by (namespace, resource) (
+                kube_resourcequota{type="hard"}
+              ) * 100 > bool 90
+            )
+        - record: geo_federation:status_k8s
+          labels:
+            kind: project_cpu
+            chart: monitoring
+            release: mapserver
+          expr: |
+            sum by (namespace) (
+              max by (namespace, container_name, pod_name) (
+                rate(
+                  container_cpu_usage_seconds_total{container_name=~".+"}[2m]
+                )
+              )
+            ) > bool min by (namespace) (kube_resourcequota{resource="requests.cpu", type="hard"})
+            and
+            sum by (namespace) (
+              kube_resourcequota{resource="requests.cpu", type="hard"}
+            )
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: project_ram
+            chart: monitoring
+            release: mapserver
+          expr: |
+            (
+              sum by (namespace) (
+                max by (namespace, container_name, pod_name) (
+                  min_over_time(
+                    container_memory_rss{container_name=~".+"}[2m]
+                  )
+                )
+              )
+              > bool
+              (
+                sum by (namespace) (
+                  kube_resourcequota{type="hard", resource="limits.memory"}
+                )
+                /
+                2  # the limits.memory quota is put at the double of what is sold to the customer
+              )
+            ) * 10
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: redis_master
+            chart: redis
+            release: redis
+          expr: |
+            (
+              min by (namespace) (
+                redis_sentinel_masters
+              ) < bool 1
+            ) * 10
+            or
+            (
+              min by (namespace) (
+                redis_sentinel_master_slaves
+              ) < bool 1
+            ) * 1
+            or
+            min by (namespace) (
+              redis_sentinel_masters
+            ) * 0
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: redis_sentinel
+            chart: redis
+            release: redis
+          expr: |
+            (
+              min by (namespace) (
+                redis_sentinel_master_sentinels
+              ) < bool 3
+            ) * 10
+            or
+            min by (namespace) (
+              redis_sentinel_master_sentinels
+            ) * 0
+---
+# Source: monitoring/templates/prometheus-rules.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: mapserver-monitoring
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: main
+    prometheus: example
+    role: alert-rules
+spec:
+  groups:
+    - name: geo_status_alerts_default
+      rules:
+        - alert: GeoStatus
+          expr: |
+            sum by (namespace) (
+              geo_federation:status_k8s{release=~"prod.*|monitoring|cache"}
+            ) >= 10
+          for: 5m
+          annotations:
+            summary: 'The status of {{ $labels.namespace }} is critical'
+---
+# Source: monitoring/templates/prometheus-rules.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: mapserver-monitoring
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: main
+    prometheus: example
+    role: alert-rules
+spec:
+  groups:
+    - name: geo_status_cache_default
+      rules:
+        - record: geo_federation:status_k8s
+          labels:
+            kind: cache_config_errors
+            chart: cache
+            release: prod
+          expr: |
+            (
+              sum by (namespace) (
+                increase(
+                  statsd_cache{namespace="default", metric=~".*\\.failure"}[5m]
+                )
+              ) > bool 0
+            ) * 10
+            or
+            sum by (namespace) (
+              statsd_cache{namespace="default"}
+            ) * 0
+---
+# Source: monitoring/templates/prometheus-rules.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: mapserver-monitoring
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: main
+    prometheus: example
+    role: alert-rules
+spec:
+  groups:
+    - name: geo_status_postgresql_default
+      rules:
+        - record: geo_federation:status_k8s
+          labels:
+            kind: postgresql_connections
+            chart: monitoring
+            release: prod
+            namespace: cluster
+          expr: |
+            sum(
+              (
+                sum by (host) (
+                  pg_stat_database_numbackends{namespace="default"}
+                )
+                > bool
+                (
+                  sum by (host) (
+                    pg_settings_max_connections{namespace="default"}
+                  )
+                  * 0.8
+                )
+              ) * 1
+              +
+              (
+                sum by (host) (
+                  pg_stat_database_numbackends{namespace="default"}
+                )
+                > bool
+                (
+                  sum by (host) (
+                    pg_settings_max_connections{namespace="default"}
+                  )
+                  * 0.9
+                )
+              ) * 9
+            )
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: postgresql_replication_lag
+            chart: monitoring
+            release: prod
+            namespace: cluster
+          expr: |
+            max(
+              (
+                min_over_time(pg_replication_lag{host!~"master.*"}[10m]) >= 0
+              ) > bool 10
+            ) * 10
+---
+# Source: monitoring/templates/prometheus-rules.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: mapserver-monitoring
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: main
+    prometheus: example
+    role: alert-rules
+spec:
+  groups:
+    - name: geo_status_es_default
+      rules:
+        - record: geo_federation:status_k8s
+          labels:
+            kind: es_max_age
+            chart: monitoring
+            release: prod
+            namespace: cluster
+          expr: |
+            (
+              max(statsd_es_max_age) > bool 900
+            ) * 10
+            or
+            max(statsd_es_max_age) * 0
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: es_max_age_error
+            chart: monitoring
+            release: prod
+            namespace: cluster
+          expr: |
+            max(
+              delta(
+                statsd_es_count{success="0"}[20m]
+              ) > bool 0
+            ) * 10
+            or
+            max(statsd_es_count) * 0
+
+        - record: geo_federation:status_k8s
+          labels:
+            kind: es_roundtrip
+            chart: monitoring
+            release: prod
+            namespace: cluster
+          expr: |
+            max(
+              statsd_es_roundtrip > bool 120
+            ) * 1
+---
+# Source: monitoring/templates/prometheus-rules.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: mapserver-monitoring
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: main
+    prometheus: example
+    role: alert-rules
+spec:
+  groups:
+    - name: geo_status_apache_default
+      rules:
+        - record: geo_federation:status_k8s
+          labels:
+            kind: apache_worker
+            chart: monitoring
+            release: prod
+          expr: |
+            max by (namespace, release) (
+              label_replace(
+                (
+                  sum by (namespace, pod) (apache_workers{state="busy"})
+                  > bool
+                  sum by (namespace, pod) (apache_workers{state="idle"}) / 3
+                ) + (
+                  (
+                    sum by (namespace, pod) (apache_workers{state="busy"})
+                    == bool
+                    0
+                  ) * 9
+                ),
+                "release", "$1", "pod", "(.*)-c2cgeoportal-.*"
+              )
+            )
+---
+# Source: monitoring/templates/service-monitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: mapserver-monitoring
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: main
+spec:
+  selector:
+    matchLabels:
+      prometheus: "true"
+  endpoints:
+    - port: prometheus
+      interval: 10s
+      honorLabels: true

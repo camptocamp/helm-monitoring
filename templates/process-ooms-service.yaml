@@ -1,14 +1,9 @@
-{{- if .Values.process_ooms.enabled}}
+{{- if .Values.processOoms.enabled}}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "monitoring.fullname" . }}-process-ooms
-  labels:
-    app: {{ template "monitoring.fullname" . }}
-    chart: {{ template "monitoring.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-    service: process-ooms
+  name: {{ include "common.fullname" ( dict "root" . "service" .Values.processOoms ) }}
+  labels: {{ include "common.labels" ( dict "root" . "service" .Values.processOoms ) | nindent 4 }}
     prometheus: "true"
 spec:
   type: ClusterIP
@@ -17,8 +12,5 @@ spec:
       targetPort: http
       protocol: TCP
       name: prometheus
-  selector:
-    app: {{ template "monitoring.fullname" . }}
-    release: {{ .Release.Name }}
-    service: process-ooms
+  selector: {{- include "common.selectorLabels" ( dict "root" . "service" .Values.processOoms ) | nindent 4 }}
 {{- end }}
