@@ -266,7 +266,7 @@ groups:
             ) == bool 0
           ) * 10
 
-      {{ if .Values.process_ooms.enabled -}}
+      {{ if .Values.processOoms.enabled -}}
       - record: geo_federation:status_k8s
         labels:
           kind: pod_process_oom

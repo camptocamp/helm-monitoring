@@ -3,19 +3,17 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+nameOverride: ''
+fullnameOverride: ''
+image:
+  pullPolicy: IfNotPresent
+
 statsd:
   enabled: true
   log_level: info
   image:
     name: prom/statsd-exporter
     tag: v0.17.0
-    pullPolicy: IfNotPresent
-  resources:
-    requests:
-      cpu: 5.0m
-      memory: 10.6Mi
-    limits:
-      memory: 120Mi
 
 resolution: 5m
 
@@ -34,28 +32,12 @@ apache:
 
 elasticsearch:
   enabled: false
-  url: https://elasticsearch.logs.camptocamp.com/
-  indexes: openshift-ch-1-gs-mutualized-print-*
   logTimeout: 120 # seconds before which a log must appear on ElasticSearch
   auth:
     user: ''
     password: ''
   maxAge: 15 # minutes
-  env:
-    C2CWSGIUTILS_CHECK_ES_TRYNUMBER: '10'
-    C2CWSGIUTILS_CHECK_ES_SLEEP: '30'
-    STATSD_PREFIX: es
-    STATSD_USE_TAGS: '1'
-    LOG_TYPE: json
-    LOG_LEVEL: INFO
-    C2C_REQUESTS_DEFAULT_TIMEOUT: '30'
-
-  resources:
-    requests:
-      cpu: 3m
-      memory: 34.1Mi
-    limits:
-      memory: 64Mi
+  env: {}
 
 global:
   enabled: false
@@ -79,18 +61,13 @@ kubernetes:
     - dbstats
     - cron
 
-process_ooms:
+processOoms:
   enabled: true
+  serviceName: ooms
   image:
     name: camptocamp/es-ooms-exporter
     tag: latest
-    pullPolicy: IfNotPresent
-  resources:
-    limits:
-      memory: 80Mi
-    requests:
-      memory: 52.5Mi
-      cpu: 11m
+  env: {}
 
 cache:
   enabled: true
@@ -120,13 +97,13 @@ postgresql:
   image:
     repository: wrouesnel/postgres_exporter
     tag: v0.8.0
-    pullPolicy: IfNotPresent
-  resources:
-    requests:
-      cpu: 1m
-      memory: 4Mi
-    limits:
-      memory: 20Mi
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: default
 
 nodeSelector: {}
 
@@ -134,5 +111,4 @@ tolerations: []
 
 affinity: {}
 
-openshift: true
 revisionHistoryLimit: 1

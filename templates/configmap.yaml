@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "common.fullname" ( dict "root" . "service" .Values ) }}-env
+  labels: {{ include "common.labels" ( dict "root" . "service" .Values ) | nindent 4 }}
+data:
+  CHART_NAME: {{ .Chart.Name }}
+  RELEASE_NAME: {{ .Release.Name }}
+  RELEASE_NAMESPACE: {{ .Release.Namespace }}

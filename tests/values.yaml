@@ -1,0 +1,78 @@
+statsd:
+  resources:
+    requests:
+      cpu: 5.0m
+      memory: 10.6Mi
+    limits:
+      memory: 120Mi
+
+print:
+  enabled: true
+  maxWaitSeconds: 10
+
+apache:
+  enabled: true
+
+elasticsearch:
+  enabled: true
+  indexes: openshift-ch-1-gs-mutualized-print-*
+  auth:
+    user: aa
+    password: bb
+  resources:
+    requests:
+      cpu: 3m
+      memory: 34.1Mi
+    limits:
+      memory: 64Mi
+
+processOoms:
+  env:
+    C2CWSGIUTILS_CHECK_ES_TRYNUMBER:
+      value: '10'
+    C2CWSGIUTILS_CHECK_ES_SLEEP:
+      value: '30'
+    STATSD_PREFIX:
+      value: es
+    STATSD_USE_TAGS:
+      value: '1'
+    LOG_TYPE:
+      value: json
+    LOG_LEVEL:
+      value: INFO
+    C2C_REQUESTS_DEFAULT_TIMEOUT:
+      value: '30'
+    ES_URL:
+      value: https://elasticsearch.logs.camptocamp.com/
+    ES_INDEXES:
+      value: 'openshift-ch-1-*'
+    ES_AUTH:
+      type: secret
+      name: secret-env
+      key: ES_AUTH
+    NAMESPACE:
+      type: configMap
+      name: env
+      key: RELEASE_NAMESPACE
+  resources:
+    limits:
+      memory: 80Mi
+    requests:
+      memory: 52.5Mi
+      cpu: 11m
+
+global:
+  enabled: true
+
+postgresql:
+  enabled: true
+  resources:
+    requests:
+      cpu: 1m
+      memory: 4Mi
+    limits:
+      memory: 20Mi
+
+serviceAccount:
+  create: true
+  name: full

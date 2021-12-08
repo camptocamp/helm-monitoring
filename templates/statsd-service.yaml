@@ -2,13 +2,8 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "monitoring.fullname" . }}-statsd
-  labels:
-    app: {{ template "monitoring.fullname" . }}
-    chart: {{ template "monitoring.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-    service: statsd
+  name: {{ include "common.fullname" ( dict "root" . "service" .Values.statsd ) }}
+  labels: {{ include "common.labels" ( dict "root" . "service" .Values.statsd ) | nindent 4 }}
     prometheus: "true"
 spec:
   type: ClusterIP
@@ -22,7 +17,5 @@ spec:
       protocol: TCP
       name: prometheus
   selector:
-    app: {{ template "monitoring.fullname" . }}
-    release: {{ .Release.Name }}
-    service: statsd
+    {{- include "common.selectorLabels" ( dict "root" . "service" .Values.statsd ) | nindent 4 }}
 {{- end }}

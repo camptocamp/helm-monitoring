@@ -1,6 +1,14 @@
 ---
-apiVersion: v1
+apiVersion: v2
 appVersion: '1.0'
 description: A Helm chart for adding monitoring for geospatial specific stuff
 name: monitoring
 version: 0.1.0
+maintainers:
+  - name: Camptocamp-geospatial
+    email: info@camptocamp.com
+    url: https://github.com/camptocamp/c2cgeoportal
+dependencies:
+  - name: common
+    repository: https://camptocamp.github.io/helm-common
+    version: 0.1.1
