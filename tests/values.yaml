@@ -16,9 +16,6 @@ apache:
 elasticsearch:
   enabled: true
   indexes: openshift-ch-1-gs-mutualized-print-*
-  auth:
-    user: aa
-    password: bb
   resources:
     requests:
       cpu: 3m

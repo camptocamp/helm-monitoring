@@ -12,22 +12,6 @@ metadata:
     app.kubernetes.io/instance: mapserver
     app.kubernetes.io/component: ooms
 ---
-# Source: monitoring/templates/secret.yaml
-apiVersion: v1
-kind: Secret
-type: Generic
-metadata:
-  name: mapserver-monitoring-env
-  labels:
-    helm.sh/chart: monitoring-0.1.0
-    app.kubernetes.io/version: "1.0"
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: monitoring
-    app.kubernetes.io/instance: mapserver
-    app.kubernetes.io/component: main
-data:
-  ES_AUTH: "UW1GemFXTWdZV0U2WW1JPQ=="
----
 # Source: monitoring/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap

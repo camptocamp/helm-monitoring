@@ -33,9 +33,6 @@ apache:
 elasticsearch:
   enabled: false
   logTimeout: 120 # seconds before which a log must appear on ElasticSearch
-  auth:
-    user: ''
-    password: ''
   maxAge: 15 # minutes
   env: {}
 
