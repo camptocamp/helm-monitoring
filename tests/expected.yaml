@@ -45,6 +45,41 @@ data:
   RELEASE_NAME: mapserver
   RELEASE_NAMESPACE: default
 ---
+# Source: monitoring/templates/info-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mapserver-monitoring-capabilities-helm
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: main
+data:
+  git_commit: d14138609b01886f544b2025f5000351c9eb092e
+  git_tree_state: clean
+  go_version: go1.17.5
+  version: v3.8.0
+---
+# Source: monitoring/templates/info-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mapserver-monitoring-capabilities-kube
+  labels:
+    helm.sh/chart: monitoring-0.1.0
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: mapserver
+    app.kubernetes.io/component: main
+data:
+  Major: "1"
+  Minor: "23"
+  Version: v1.23.0
+---
 # Source: monitoring/templates/statsd-configmap.yaml
 apiVersion: v1
 kind: ConfigMap

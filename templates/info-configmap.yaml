@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "common.fullname" ( dict "root" . "service" .Values.statsd ) }}-capabilities-helm
+  labels: {{ include "common.labels" ( dict "root" . "service" .Values.statsd ) | nindent 4 }}
+data: {{ toYaml .Capabilities.HelmVersion | nindent 2}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "common.fullname" ( dict "root" . "service" .Values.statsd ) }}-capabilities-kube
+  labels: {{ include "common.labels" ( dict "root" . "service" .Values.statsd ) | nindent 4 }}
+data: {{ toYaml .Capabilities.KubeVersion | nindent 2}}
