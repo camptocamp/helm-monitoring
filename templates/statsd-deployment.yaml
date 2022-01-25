@@ -15,14 +15,7 @@ spec:
   template:
     metadata:
       labels: {{- include "common.selectorLabels" ( dict "root" . "service" .Values.statsd ) | nindent 8 }}
-    spec: {{- include "common.podConfig" ( dict
-          "root" .
-          "service" .Values.statsd
-          "affinitySelector" (dict
-            "app.kubernetes.io/instance" .Release.Name
-            "app.kubernetes.io/name" ( include "common.name" ( dict "root" . "service" .Values.statsd ) )
-            "app.kubernetes.io/component" "main"
-          )) | nindent 6 }}
+    spec: {{- include "common.podConfig" ( dict "root" . "service" .Values.statsd "affinitySelector" (dict "app.kubernetes.io/instance" .Release.Name "app.kubernetes.io/name" ( include "common.name" ( dict "root" . "service" .Values.statsd ) ) "app.kubernetes.io/component" "main" )) | nindent 6 }}
       volumes:
         - name: mappings-volume
           configMap:
