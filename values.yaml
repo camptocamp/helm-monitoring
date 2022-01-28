@@ -66,8 +66,30 @@ processOoms:
     tag: latest
   env: {}
 
-cache:
+dbstats:
   enabled: true
+  serviceName: dbstats
+  image:
+    repository: camptocamp/c2cwsgiutils
+    tag: latest
+    sha:
+  env: {}
+  # LOG_LEVEL
+  # PROMETHEUS_URL: http://prometheus-pushgateway.gs-metrics.svc:9091/
+  # STATSD_URL
+  annotations: {}
+  resources: {}
+  prometheus: true
+  dbs: []
+  # database: name # default to PGDATABASE environment variable
+  # user: username # default to PGUSER environment variable
+  # password: password # default to PGPASSWORD environment variable
+  # host: hostname # default to PGHOST environment variable
+  # port: port # default to PGPORT environment variable
+  # schema: [schema1, schema2]
+
+cache:
+  enabled: false
 
 postgresql:
   enabled: false
