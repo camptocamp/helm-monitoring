@@ -1,0 +1,43 @@
+{{- if .Values.dbstats.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "common.fullname" ( dict "root" . "service" .Values.dbstats ) }}
+  labels: {{ include "common.labels" ( dict "root" . "service" .Values.dbstats ) | nindent 4 }}
+  annotations: {{- toYaml .Values.dbstats.annotations | nindent 4 }}
+spec:
+  schedule: "{{ mod (regexReplaceAll "[a-f]+" (printf "%s-%s" .Release.Namespace .Release.Name | sha256sum) "" | trunc 5) 60 }} * * * *"
+  successfulJobsHistoryLimit: 0
+  failedJobsHistoryLimit: 1
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:
+        metadata:
+          labels: {{ include "common.selectorLabels" ( dict "root" . "service" .Values.dbstats ) | nindent 12 }}
+        spec: {{ include "common.podConfig" ( dict "root" . "service" .Values.dbstats ) | nindent 10 }}
+          restartPolicy: Never
+          containers:
+            - name: dbstats
+              {{- include "common.containerConfig" ( dict "root" . "container" .Values.dbstats ) | nindent 14 }}
+              args:
+                - bash
+                - -cxe
+                - |
+                  {{- range .Values.dbstats.dbs  }}
+                  {{- if $.Values.dbstats.prometheus }}
+                  TARGET="--prometheus_instance={{ $.Release.Namespace }}-{{ template "common.fullname" ( dict "root" $ "service" $.Values ) }}-{{ .database | default "$(PGDATABASE)" }} --prometheus_url=${PROMETHEUS_URL}"
+                  {{- else }}
+                  TARGET="--statsd_address=${STATSD_URL} --statsd_prefix=dbstats"
+                  {{- end }}
+                  export STATSD_TAG_DB="{{ .database | default "$(PGDATABASE)" }}"
+                  c2cwsgiutils-stats-db \
+                    --db=postgresql://{{ .user | default "$(PGUSER)" }}:{{ .password | default "$(PGPASSWORD)" }}@{{ .host | default "$(PGHOST)" }}:{{ .port | default "$(PGPORT)" }}/{{ .database | default "$(PGDATABASE)" }} \
+                    --verbosity=$(LOG_LEVEL) \
+                    {{- range .schemas }}
+                    --schema={{ . }} \
+                    {{- end }}
+                    ${TARGET}
+                  {{- end }}
+{{- end }}

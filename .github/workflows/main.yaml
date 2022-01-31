@@ -38,7 +38,7 @@ jobs:
       - run: helm dependency update .
       - run: helm lint .
       - run: helm lint --values=tests/values.yaml .
-      - run: helm template --namespace=default --values=tests/values.yaml mapserver . > tests/actual.yaml
+      - run: helm template --namespace=default --values=tests/values.yaml monitoring . > tests/actual.yaml
       - run: diff --ignore-trailing-space tests/actual.yaml tests/expected.yaml
 
       - name: Setup k3s/k3d

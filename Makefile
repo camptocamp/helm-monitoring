@@ -1,7 +1,7 @@
 HELM != helm
 
 gen-expected:
-	${HELM} template --namespace=default --values=tests/values.yaml mapserver . > tests/expected.yaml
+	${HELM} template --namespace=default --values=tests/values.yaml monitoring . > tests/expected.yaml
 	sed -i 's/[[:blank:]]\+$$//g'  tests/expected.yaml
 
 start-local:

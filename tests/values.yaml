@@ -58,6 +58,52 @@ processOoms:
       memory: 52.5Mi
       cpu: 11m
 
+dbstats:
+  enabled: true
+  resources:
+    requests:
+      cpu: 1m
+      memory: 1.5Mi
+    limits:
+      memory: 2.5Mi
+  env:
+    LOG_LEVEL:
+      value: INFO
+    PROMETHEUS_URL:
+      value: http://prometheus-pushgateway.gs-metrics.svc:9091/
+    PGUSER:
+      type: secret
+      name: database
+      key: username
+    PGPASSWORD:
+      type: secret
+      name: database
+      key: password
+    PGHOST:
+      type: secret
+      name: database
+      key: hostnameSlave
+    PGPORT:
+      type: secret
+      name: database
+      key: portSlave
+    PGDATABASE:
+      type: secret
+      name: database
+      key: database
+
+  dbs:
+    - database: test1
+      schema:
+        - test1
+    - database: test2
+      user: test2
+      password: test2
+      host: test2
+      port: 6789
+      schema:
+        - test2
+        - test3
 global:
   enabled: true
 
