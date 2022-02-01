@@ -28,6 +28,7 @@ data:
   CHART_NAME: monitoring
   RELEASE_NAME: monitoring
   RELEASE_NAMESPACE: default
+  DBSTATS_CLIENT_RELEASE: "latest"
 ---
 # Source: monitoring/templates/info-configmap.yaml
 apiVersion: v1

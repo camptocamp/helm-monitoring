@@ -7,3 +7,4 @@ data:
   CHART_NAME: {{ .Chart.Name }}
   RELEASE_NAME: {{ .Release.Name }}
   RELEASE_NAMESPACE: {{ .Release.Namespace }}
+  DBSTATS_CLIENT_RELEASE: {{ .Values.dbstats.image.tag | quote }}
