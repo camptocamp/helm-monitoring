@@ -5,7 +5,10 @@ kind: Deployment
 metadata:
   name: {{ include "common.fullname" ( dict "root" . "service" .Values.statsd ) }}
   labels: {{ include "common.labels" ( dict "root" . "service" .Values.statsd ) | nindent 4 }}
-  annotations: {{- toYaml .Values.statsd.annotations | nindent 4 }}
+  {{- with .Values.statsd.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   replicas: 1
   strategy:
@@ -15,6 +18,10 @@ spec:
   template:
     metadata:
       labels: {{- include "common.selectorLabels" ( dict "root" . "service" .Values.statsd ) | nindent 8 }}
+      {{- with .Values.statsd.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec: {{- include "common.podConfig" ( dict "root" . "service" .Values.statsd "affinitySelector" (dict "app.kubernetes.io/instance" .Release.Name "app.kubernetes.io/name" ( include "common.name" ( dict "root" . "service" .Values.statsd ) ) "app.kubernetes.io/component" "main" )) | nindent 6 }}
       volumes:
         - name: mappings-volume
