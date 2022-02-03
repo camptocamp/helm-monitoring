@@ -3,6 +3,23 @@ entries:
   monitoring:
   - apiVersion: v2
     appVersion: "1.0"
+    created: "2022-02-03T12:50:55.90715086Z"
+    dependencies:
+    - name: common
+      repository: https://camptocamp.github.io/helm-common
+      version: 0.1.6
+    description: A Helm chart for adding monitoring for geospatial specific stuff
+    digest: e2c5cb7ace1fb2f2dce7d9b8fcb35896bbe582f8b040167d171c8576b23274ee
+    maintainers:
+    - email: info@camptocamp.com
+      name: Camptocamp-geospatial
+      url: https://github.com/camptocamp/c2cgeoportal
+    name: monitoring
+    urls:
+    - https://github.com/camptocamp/helm-monitoring/releases/download/0.2.5/monitoring-0.2.5.tgz
+    version: 0.2.5
+  - apiVersion: v2
+    appVersion: "1.0"
     created: "2022-02-02T16:01:09.879183714Z"
     dependencies:
     - name: common
@@ -154,4 +171,4 @@ entries:
     urls:
     - https://github.com/camptocamp/helm-monitoring/releases/download/0.1.0/monitoring-0.1.0.tgz
     version: 0.1.0
-generated: "2022-02-02T16:01:09.879453617Z"
+generated: "2022-02-03T12:50:55.90720176Z"
