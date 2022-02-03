@@ -330,8 +330,6 @@ metadata:
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
     app.kubernetes.io/component: ooms
-  annotations:
-    null
 spec:
   replicas: 1
   strategy:
@@ -433,8 +431,6 @@ metadata:
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
     app.kubernetes.io/component: main
-  annotations:
-    null
 spec:
   replicas: 1
   strategy:
@@ -522,8 +518,6 @@ metadata:
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
     app.kubernetes.io/component: dbstats
-  annotations:
-    {}
 spec:
   schedule: "41 * * * *"
   successfulJobsHistoryLimit: 0

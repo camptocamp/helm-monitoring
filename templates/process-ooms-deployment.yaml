@@ -4,7 +4,10 @@ kind: Deployment
 metadata:
   name: {{ include "common.fullname" ( dict "root" . "service" .Values.processOoms ) }}
   labels: {{ include "common.labels" ( dict "root" . "service" .Values.processOoms ) | nindent 4 }}
-  annotations: {{- toYaml .Values.processOoms.annotations | nindent 4 }}
+  {{- with .Values.processOoms.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   replicas: 1
   strategy:
@@ -14,6 +17,10 @@ spec:
   template:
     metadata:
       labels: {{- include "common.selectorLabels" ( dict "root" . "service" .Values.processOoms ) | nindent 8 }}
+      {{- with .Values.processOoms.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec: {{- include "common.podConfig" ( dict "root" . "service" .Values.processOoms "affinitySelector" (dict "app.kubernetes.io/instance" .Release.Name "app.kubernetes.io/name" ( include "common.name" ( dict "root" . "service" .Values.processOoms ) ) "app.kubernetes.io/component" "main" )) | nindent 6 }}
       containers:
         - name: process-ooms
