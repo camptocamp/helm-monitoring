@@ -10,6 +10,7 @@ metadata:
   {{- end }}
 spec:
   replicas: 1
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
   strategy:
     type: RollingUpdate
   selector:
@@ -31,5 +32,4 @@ spec:
               protocol: TCP
           securityContext:
             runAsNonRoot: true
-  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
 {{- end }}
