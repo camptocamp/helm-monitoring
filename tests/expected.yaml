@@ -5,7 +5,7 @@ kind: ServiceAccount
 metadata:
   name: monitoring-ooms
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
@@ -18,7 +18,7 @@ kind: ConfigMap
 metadata:
   name: monitoring-env
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
@@ -36,7 +36,7 @@ kind: ConfigMap
 metadata:
   name: monitoring-capabilities-helm
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
@@ -54,7 +54,7 @@ kind: ConfigMap
 metadata:
   name: monitoring-capabilities-kube
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
@@ -71,7 +71,7 @@ kind: ConfigMap
 metadata:
   name: monitoring
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
@@ -230,7 +230,7 @@ kind: Role
 metadata:
   name: monitoring-ooms
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
@@ -250,7 +250,7 @@ kind: RoleBinding
 metadata:
   name: monitoring-ooms
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
@@ -270,7 +270,7 @@ kind: Service
 metadata:
   name: monitoring-ooms
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
@@ -295,7 +295,7 @@ kind: Service
 metadata:
   name: monitoring
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
@@ -324,7 +324,7 @@ kind: Deployment
 metadata:
   name: monitoring-ooms
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
@@ -347,7 +347,6 @@ spec:
         app.kubernetes.io/instance: monitoring
         app.kubernetes.io/component: ooms
     spec:
-
       serviceAccountName: full
       securityContext:
         null
@@ -376,34 +375,34 @@ spec:
           image: ":latest"
           imagePullPolicy: IfNotPresent
           env:
-              - name: "C2CWSGIUTILS_CHECK_ES_SLEEP"
-                value: "30"
-              - name: "C2CWSGIUTILS_CHECK_ES_TRYNUMBER"
-                value: "10"
-              - name: "C2C_REQUESTS_DEFAULT_TIMEOUT"
-                value: "30"
-              - name: "ES_AUTH"
-                valueFrom:
-                  secretKeyRef:
-                    name: "secret-env"
-                    key: "ES_AUTH"
-              - name: "ES_INDEXES"
-                value: "openshift-ch-1-*"
-              - name: "ES_URL"
-                value: "https://elasticsearch.logs.camptocamp.com/"
-              - name: "LOG_LEVEL"
-                value: "INFO"
-              - name: "LOG_TYPE"
-                value: "json"
-              - name: "NAMESPACE"
-                valueFrom:
-                  configMapKeyRef:
-                    name: "env"
-                    key: "RELEASE_NAMESPACE"
-              - name: "STATSD_PREFIX"
-                value: "es"
-              - name: "STATSD_USE_TAGS"
-                value: "1"
+            - name: "C2CWSGIUTILS_CHECK_ES_SLEEP"
+              value: "30"
+            - name: "C2CWSGIUTILS_CHECK_ES_TRYNUMBER"
+              value: "10"
+            - name: "C2C_REQUESTS_DEFAULT_TIMEOUT"
+              value: "30"
+            - name: "ES_AUTH"
+              valueFrom:
+                secretKeyRef:
+                  name: "secret-env"
+                  key: "ES_AUTH"
+            - name: "ES_INDEXES"
+              value: "openshift-ch-1-*"
+            - name: "ES_URL"
+              value: "https://elasticsearch.logs.camptocamp.com/"
+            - name: "LOG_LEVEL"
+              value: "INFO"
+            - name: "LOG_TYPE"
+              value: "json"
+            - name: "NAMESPACE"
+              valueFrom:
+                configMapKeyRef:
+                  name: "env"
+                  key: "RELEASE_NAMESPACE"
+            - name: "STATSD_PREFIX"
+              value: "es"
+            - name: "STATSD_USE_TAGS"
+              value: "1"
           terminationMessagePolicy: FallbackToLogsOnError
           resources:
             limits:
@@ -425,7 +424,7 @@ kind: Deployment
 metadata:
   name: monitoring
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
@@ -448,7 +447,6 @@ spec:
         app.kubernetes.io/instance: monitoring
         app.kubernetes.io/component: main
     spec:
-
       serviceAccountName: full
       securityContext:
         null
@@ -513,7 +511,7 @@ kind: CronJob
 metadata:
   name: monitoring-dbstats
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
@@ -534,7 +532,6 @@ spec:
             app.kubernetes.io/instance: monitoring
             app.kubernetes.io/component: dbstats
         spec:
-
           serviceAccountName: full
           securityContext:
             null
@@ -548,35 +545,35 @@ spec:
               image: "camptocamp/c2cwsgiutils:latest"
               imagePullPolicy: IfNotPresent
               env:
-                  - name: "LOG_LEVEL"
-                    value: "INFO"
-                  - name: "PGDATABASE"
-                    valueFrom:
-                      secretKeyRef:
-                        name: "database"
-                        key: "database"
-                  - name: "PGHOST"
-                    valueFrom:
-                      secretKeyRef:
-                        name: "database"
-                        key: "hostnameSlave"
-                  - name: "PGPASSWORD"
-                    valueFrom:
-                      secretKeyRef:
-                        name: "database"
-                        key: "password"
-                  - name: "PGPORT"
-                    valueFrom:
-                      secretKeyRef:
-                        name: "database"
-                        key: "portSlave"
-                  - name: "PGUSER"
-                    valueFrom:
-                      secretKeyRef:
-                        name: "database"
-                        key: "username"
-                  - name: "PROMETHEUS_URL"
-                    value: "http://prometheus-pushgateway.gs-metrics.svc:9091/"
+                - name: "LOG_LEVEL"
+                  value: "INFO"
+                - name: "PGDATABASE"
+                  valueFrom:
+                    secretKeyRef:
+                      name: "database"
+                      key: "database"
+                - name: "PGHOST"
+                  valueFrom:
+                    secretKeyRef:
+                      name: "database"
+                      key: "hostnameSlave"
+                - name: "PGPASSWORD"
+                  valueFrom:
+                    secretKeyRef:
+                      name: "database"
+                      key: "password"
+                - name: "PGPORT"
+                  valueFrom:
+                    secretKeyRef:
+                      name: "database"
+                      key: "portSlave"
+                - name: "PGUSER"
+                  valueFrom:
+                    secretKeyRef:
+                      name: "database"
+                      key: "username"
+                - name: "PROMETHEUS_URL"
+                  value: "http://prometheus-pushgateway.gs-metrics.svc:9091/"
               terminationMessagePolicy: FallbackToLogsOnError
               resources:
                 limits:
@@ -607,7 +604,7 @@ kind: PrometheusRule
 metadata:
   name: monitoring
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
@@ -918,7 +915,7 @@ kind: PrometheusRule
 metadata:
   name: monitoring
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
@@ -976,7 +973,7 @@ kind: PrometheusRule
 metadata:
   name: monitoring
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
@@ -1109,7 +1106,7 @@ kind: PrometheusRule
 metadata:
   name: monitoring
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
@@ -1192,7 +1189,7 @@ kind: PrometheusRule
 metadata:
   name: monitoring
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
@@ -1404,7 +1401,7 @@ kind: PrometheusRule
 metadata:
   name: monitoring
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
@@ -1431,7 +1428,7 @@ kind: PrometheusRule
 metadata:
   name: monitoring
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
@@ -1497,7 +1494,7 @@ kind: PrometheusRule
 metadata:
   name: monitoring
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
@@ -1554,7 +1551,7 @@ kind: PrometheusRule
 metadata:
   name: monitoring
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
@@ -1595,7 +1592,7 @@ kind: ServiceMonitor
 metadata:
   name: monitoring
   labels:
-    helm.sh/chart: monitoring-0.1.0
+    helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring

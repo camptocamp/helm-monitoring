@@ -104,7 +104,8 @@ dbstats:
       schema:
         - test2
         - test3
-global:
+
+namespaceGlobal:
   enabled: true
 
 postgresql:

@@ -25,8 +25,8 @@ spec:
 {{-   template "rules" (dict "name" "mapfish-print" "root" .) }}
 {{- end}}
 
-{{- if .Values.global.enabled }}
-{{-   template "rules" (dict "name" "global" "root" .) }}
+{{- if .Values.namespaceGlobal.enabled }}
+{{-   template "rules" (dict "name" "namespaceGlobal" "root" .) }}
 {{-   template "rules" (dict "name" "alerts" "root" .) }}
 {{- end}}
 
