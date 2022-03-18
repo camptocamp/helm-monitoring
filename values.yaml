@@ -3,11 +3,13 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+global:
+  image:
+    pullPolicy: IfNotPresent
+  configMapNameOverride: {}
+
 nameOverride: ''
 fullnameOverride: ''
-image:
-  pullPolicy: IfNotPresent
-configMapNameOverride: {}
 
 statsd:
   enabled: true
@@ -37,7 +39,7 @@ elasticsearch:
   maxAge: 15 # minutes
   env: {}
 
-global:
+namespaceGlobal:
   enabled: false
   project:
     resolution: 2m
