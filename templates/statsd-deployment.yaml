@@ -11,7 +11,7 @@ metadata:
   {{- end }}
 spec:
   replicas: 1
-  revisionHistoryLimit: {{ .Values.revisionHistoryLimit | default 3 }}
+  revisionHistoryLimit: {{ .Values.global.revisionHistoryLimit | default 3 }}
   strategy:
     type: RollingUpdate
   selector:
@@ -49,5 +49,5 @@ spec:
             httpGet:
               path: /metrics
               port: http
-  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  revisionHistoryLimit: {{ .Values.global.revisionHistoryLimit }}
 {{- end }}
