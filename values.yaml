@@ -13,6 +13,7 @@ fullnameOverride: ''
 
 statsd:
   enabled: true
+  serviceName: statsd
   log_level: info
   image:
     name: prom/statsd-exporter
