@@ -43,10 +43,10 @@ metadata:
     app.kubernetes.io/instance: monitoring
     app.kubernetes.io/component: main
 data:
-  git_commit: 5cb9af4b1b271d11d7a97a71df3ac337dd94ad37
+  git_commit: 6e3701edea09e5d55a8ca2aae03a68917630e91b
   git_tree_state: clean
   go_version: go1.17.5
-  version: v3.8.1
+  version: v3.8.2
 ---
 # Source: monitoring/templates/info-configmap.yaml
 apiVersion: v1
