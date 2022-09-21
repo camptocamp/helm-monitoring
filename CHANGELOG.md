@@ -4,7 +4,7 @@
 
 [Full Changelog](https://github.com/camptocamp/helm-monitoring/compare/0.2.8...0.2.9)
 
-#### :package: Dependencies update
+**Merged pull requests:**
 
 - Update all patch versions [\#40](https://github.com/camptocamp/helm-monitoring/pull/40) ([renovate[bot]](https://github.com/apps/renovate))
 - Update dependency c2cciutils to v1.2.dev20220506093925 [\#39](https://github.com/camptocamp/helm-monitoring/pull/39) ([renovate[bot]](https://github.com/apps/renovate))
@@ -16,7 +16,7 @@
 
 [Full Changelog](https://github.com/camptocamp/helm-monitoring/compare/0.2.7...0.2.8)
 
-#### :sparkles: Enhancements
+**Implemented enhancements:**
 
 - Add missing statsd service name [\#35](https://github.com/camptocamp/helm-monitoring/pull/35) ([sbrunner](https://github.com/sbrunner))
 
@@ -24,7 +24,7 @@
 
 [Full Changelog](https://github.com/camptocamp/helm-monitoring/compare/0.2.6...0.2.7)
 
-#### :sparkles: Enhancements
+**Implemented enhancements:**
 
 - Move revisionHistoryLimit in globals [\#33](https://github.com/camptocamp/helm-monitoring/pull/33) ([sbrunner](https://github.com/sbrunner))
 
@@ -32,7 +32,7 @@
 
 [Full Changelog](https://github.com/camptocamp/helm-monitoring/compare/0.2.5...0.2.6)
 
-#### :package: Dependencies update
+**Merged pull requests:**
 
 - Update dependency c2cciutils to v1.2.dev20220317100006 [\#34](https://github.com/camptocamp/helm-monitoring/pull/34) ([renovate[bot]](https://github.com/apps/renovate))
 - Update Helm release common to v0.2.1 [\#32](https://github.com/camptocamp/helm-monitoring/pull/32) ([renovate[bot]](https://github.com/apps/renovate))
@@ -56,7 +56,7 @@
 
 [Full Changelog](https://github.com/camptocamp/helm-monitoring/compare/0.2.4...0.2.5)
 
-#### :package: Dependencies update
+**Merged pull requests:**
 
 - Upgrade common [\#15](https://github.com/camptocamp/helm-monitoring/pull/15) ([sbrunner](https://github.com/sbrunner))
 - Bump c2cciutils from 1.1.dev20220131090250 to 1.1.dev20220202080326 in /ci [\#14](https://github.com/camptocamp/helm-monitoring/pull/14) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -65,7 +65,7 @@
 
 [Full Changelog](https://github.com/camptocamp/helm-monitoring/compare/0.2.3...0.2.4)
 
-#### :package: Dependencies update
+**Merged pull requests:**
 
 - Upgrade common [\#13](https://github.com/camptocamp/helm-monitoring/pull/13) ([sbrunner](https://github.com/sbrunner))
 
@@ -73,7 +73,7 @@
 
 [Full Changelog](https://github.com/camptocamp/helm-monitoring/compare/0.2.2...0.2.3)
 
-#### :bug: Bug Fixes
+**Fixed bugs:**
 
 - Fix CronJob [\#12](https://github.com/camptocamp/helm-monitoring/pull/12) ([sbrunner](https://github.com/sbrunner))
 
@@ -81,7 +81,7 @@
 
 [Full Changelog](https://github.com/camptocamp/helm-monitoring/compare/0.2.1...0.2.2)
 
-#### :package: Dependencies update
+**Merged pull requests:**
 
 - Bump c2cciutils from 1.1.dev20220124152826 to 1.1.dev20220131090250 in /ci [\#11](https://github.com/camptocamp/helm-monitoring/pull/11) ([dependabot[bot]](https://github.com/apps/dependabot))
 
@@ -89,7 +89,7 @@
 
 [Full Changelog](https://github.com/camptocamp/helm-monitoring/compare/0.2.0...0.2.1)
 
-#### :sparkles: Enhancements
+**Implemented enhancements:**
 
 - Add dbstats [\#10](https://github.com/camptocamp/helm-monitoring/pull/10) ([sbrunner](https://github.com/sbrunner))
 
@@ -105,11 +105,11 @@
 
 [Full Changelog](https://github.com/camptocamp/helm-monitoring/compare/0.1.1...0.1.2)
 
-#### :sparkles: Enhancements
+**Implemented enhancements:**
 
 - Add info, inline the map [\#9](https://github.com/camptocamp/helm-monitoring/pull/9) ([sbrunner](https://github.com/sbrunner))
 
-#### :package: Dependencies update
+**Merged pull requests:**
 
 - Bump c2cciutils from 1.1.dev20220120144445 to 1.1.dev20220124152826 in /ci [\#8](https://github.com/camptocamp/helm-monitoring/pull/8) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20220119105226 to 1.1.dev20220120144445 in /ci [\#7](https://github.com/camptocamp/helm-monitoring/pull/7) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -123,15 +123,12 @@
 
 [Full Changelog](https://github.com/camptocamp/helm-monitoring/compare/6ebb911aaa2743653a9c74bfb207fbdb2952d09e...0.1.0)
 
-#### :package: Dependencies update
+**Merged pull requests:**
 
 - Bump c2cciutils from 1.1.dev20211215101636 to 1.1.dev20220105162844 in /ci [\#5](https://github.com/camptocamp/helm-monitoring/pull/5) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20211209145632 to 1.1.dev20211215101636 in /ci [\#4](https://github.com/camptocamp/helm-monitoring/pull/4) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20211125140927 to 1.1.dev20211209145632 in /ci [\#3](https://github.com/camptocamp/helm-monitoring/pull/3) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump c2cciutils from 1.1.dev20211021112135 to 1.1.dev20211125140927 in /ci [\#2](https://github.com/camptocamp/helm-monitoring/pull/2) ([dependabot[bot]](https://github.com/apps/dependabot))
-
-**Merged pull requests:**
-
 - First version [\#1](https://github.com/camptocamp/helm-monitoring/pull/1) ([sbrunner](https://github.com/sbrunner))
 
 \* _This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)_
