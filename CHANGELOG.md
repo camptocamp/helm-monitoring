@@ -1,5 +1,45 @@
 # Changelog
 
+## [0.3.0](https://github.com/camptocamp/helm-monitoring/tree/0.3.0) (2022-11-14)
+
+[Full Changelog](https://github.com/camptocamp/helm-monitoring/compare/0.2.9...0.3.0)
+
+#### :books: Documentation
+
+- Add generated changelog [\#50](https://github.com/camptocamp/helm-monitoring/pull/50) ([sbrunner](https://github.com/sbrunner))
+
+#### :wrench: Build, CI, Tests, Code style
+
+- Fix repository in workflow used to delete old workflow runs [\#69](https://github.com/camptocamp/helm-monitoring/pull/69) ([sbrunner](https://github.com/sbrunner))
+- Add workflow to delete old workflow runs [\#67](https://github.com/camptocamp/helm-monitoring/pull/67) ([sbrunner](https://github.com/sbrunner))
+- Fix the get config in changelog workflow [\#62](https://github.com/camptocamp/helm-monitoring/pull/62) ([sbrunner](https://github.com/sbrunner))
+- Schedule Renovate on early Saturday [\#58](https://github.com/camptocamp/helm-monitoring/pull/58) ([sbrunner](https://github.com/sbrunner))
+- Fix the changelog generator workflow [\#57](https://github.com/camptocamp/helm-monitoring/pull/57) ([sbrunner](https://github.com/sbrunner))
+- Clean all the images already present in the image given by GitHub [\#56](https://github.com/camptocamp/helm-monitoring/pull/56) ([sbrunner](https://github.com/sbrunner))
+- Update the changelog [\#55](https://github.com/camptocamp/helm-monitoring/pull/55) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
+- Update the changelog generation workflow [\#54](https://github.com/camptocamp/helm-monitoring/pull/54) ([sbrunner](https://github.com/sbrunner))
+- Remove Dependabot configuration [\#53](https://github.com/camptocamp/helm-monitoring/pull/53) ([sbrunner](https://github.com/sbrunner))
+- Update the changelog [\#51](https://github.com/camptocamp/helm-monitoring/pull/51) ([github-actions[bot]](https://github.com/apps/github-actions))
+- Don't run 2 CI jobs in a pull request [\#45](https://github.com/camptocamp/helm-monitoring/pull/45) ([sbrunner](https://github.com/sbrunner))
+
+#### :package: Dependencies update
+
+- Update Helm release common to v0.3.0 [\#70](https://github.com/camptocamp/helm-monitoring/pull/70) ([renovate[bot]](https://github.com/apps/renovate))
+- Update dependency c2cciutils to v1.3.11 [\#68](https://github.com/camptocamp/helm-monitoring/pull/68) ([renovate[bot]](https://github.com/apps/renovate))
+- Update dependency c2cciutils to v1.3.10 [\#66](https://github.com/camptocamp/helm-monitoring/pull/66) ([renovate[bot]](https://github.com/apps/renovate))
+- Update dependency c2cciutils to v1.3.9 [\#65](https://github.com/camptocamp/helm-monitoring/pull/65) ([renovate[bot]](https://github.com/apps/renovate))
+- Update dependency c2cciutils to v1.3.7 [\#64](https://github.com/camptocamp/helm-monitoring/pull/64) ([renovate[bot]](https://github.com/apps/renovate))
+- Update dependency c2cciutils to v1.3.5 [\#63](https://github.com/camptocamp/helm-monitoring/pull/63) ([renovate[bot]](https://github.com/apps/renovate))
+- Update dependency c2cciutils to v1.3.2 [\#60](https://github.com/camptocamp/helm-monitoring/pull/60) ([renovate[bot]](https://github.com/apps/renovate))
+- Update dependency c2cciutils to v1.2.1 [\#52](https://github.com/camptocamp/helm-monitoring/pull/52) ([renovate[bot]](https://github.com/apps/renovate))
+- Update azure/setup-helm action to v3 [\#49](https://github.com/camptocamp/helm-monitoring/pull/49) ([renovate[bot]](https://github.com/apps/renovate))
+- Update dependency c2cciutils to v1.2.0 [\#48](https://github.com/camptocamp/helm-monitoring/pull/48) ([renovate[bot]](https://github.com/apps/renovate))
+- Update dependency c2cciutils to v1.2.dev20220620100308 [\#47](https://github.com/camptocamp/helm-monitoring/pull/47) ([renovate[bot]](https://github.com/apps/renovate))
+- Update dependency c2cciutils to v1.2.dev20220613045412 [\#46](https://github.com/camptocamp/helm-monitoring/pull/46) ([renovate[bot]](https://github.com/apps/renovate))
+- Update dependency c2cciutils to v1.2.dev20220601085126 [\#44](https://github.com/camptocamp/helm-monitoring/pull/44) ([renovate[bot]](https://github.com/apps/renovate))
+- Update dependency c2cciutils to v1.2.dev20220527115520 [\#42](https://github.com/camptocamp/helm-monitoring/pull/42) ([renovate[bot]](https://github.com/apps/renovate))
+- Update Helm release common to v0.2.3 [\#41](https://github.com/camptocamp/helm-monitoring/pull/41) ([renovate[bot]](https://github.com/apps/renovate))
+
 ## [0.2.9](https://github.com/camptocamp/helm-monitoring/tree/0.2.9) (2022-05-19)
 
 [Full Changelog](https://github.com/camptocamp/helm-monitoring/compare/0.2.8...0.2.9)
