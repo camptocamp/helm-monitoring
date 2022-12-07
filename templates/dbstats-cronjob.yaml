@@ -45,7 +45,6 @@ spec:
                   export STATSD_TAG_DB="{{ .database | default "$(PGDATABASE)" }}"
                   c2cwsgiutils-stats-db \
                     --db=postgresql://{{ .user | default "$(PGUSER)" }}:{{ .password | default "$(PGPASSWORD)" }}@{{ .host | default "$(PGHOST)" }}:{{ .port | default "$(PGPORT)" }}/{{ .database | default "$(PGDATABASE)" }} \
-                    --verbosity=$(LOG_LEVEL) \
                     {{- range .schemas }}
                     --schema={{ . }} \
                     {{- end }}
