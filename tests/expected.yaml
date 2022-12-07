@@ -589,13 +589,11 @@ spec:
                   export STATSD_TAG_DB="test1"
                   c2cwsgiutils-stats-db \
                     --db=postgresql://$(PGUSER):$(PGPASSWORD)@$(PGHOST):$(PGPORT)/test1 \
-                    --verbosity=$(LOG_LEVEL) \
                     ${TARGET}
                   TARGET="--prometheus_instance=default-monitoring-test2 --prometheus_url=${PROMETHEUS_URL}"
                   export STATSD_TAG_DB="test2"
                   c2cwsgiutils-stats-db \
                     --db=postgresql://test2:test2@test2:6789/test2 \
-                    --verbosity=$(LOG_LEVEL) \
                     ${TARGET}
 ---
 # Source: monitoring/templates/prometheus-rules.yaml
