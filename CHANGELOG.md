@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.3.1](https://github.com/camptocamp/helm-monitoring/tree/0.3.1) (2022-12-07)
+
+[Full Changelog](https://github.com/camptocamp/helm-monitoring/compare/0.3.0...0.3.1)
+
+#### :wrench: Build, CI, Tests, Code style
+
+- Configure Mend Bolt [\#75](https://github.com/camptocamp/helm-monitoring/pull/75) ([sbrunner](https://github.com/sbrunner))
+- Upgrade deprecated set-output commands [\#72](https://github.com/camptocamp/helm-monitoring/pull/72) ([sbrunner](https://github.com/sbrunner))
+- Update the changelog [\#71](https://github.com/camptocamp/helm-monitoring/pull/71) ([c2c-bot-gis-ci](https://github.com/c2c-bot-gis-ci))
+
+#### :package: Dependencies update
+
+- Update dependency c2cciutils to v1.4.0 [\#74](https://github.com/camptocamp/helm-monitoring/pull/74) ([renovate[bot]](https://github.com/apps/renovate))
+- Update dependency c2cciutils to v1.3.12 [\#73](https://github.com/camptocamp/helm-monitoring/pull/73) ([renovate[bot]](https://github.com/apps/renovate))
+
 ## [0.3.0](https://github.com/camptocamp/helm-monitoring/tree/0.3.0) (2022-11-14)
 
 [Full Changelog](https://github.com/camptocamp/helm-monitoring/compare/0.2.9...0.3.0)
