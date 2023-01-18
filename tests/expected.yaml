@@ -6,7 +6,7 @@ metadata:
   name: monitoring-ooms
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
@@ -19,7 +19,7 @@ metadata:
   name: monitoring-env
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
@@ -37,7 +37,7 @@ metadata:
   name: monitoring-capabilities-helm
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
@@ -55,7 +55,7 @@ metadata:
   name: monitoring-capabilities-kube
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
@@ -72,7 +72,7 @@ metadata:
   name: monitoring-statsd
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
@@ -231,7 +231,7 @@ metadata:
   name: monitoring-ooms
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
@@ -251,7 +251,7 @@ metadata:
   name: monitoring-ooms
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
@@ -271,7 +271,7 @@ metadata:
   name: monitoring-ooms
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
@@ -296,7 +296,7 @@ metadata:
   name: monitoring-statsd
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
@@ -325,7 +325,7 @@ metadata:
   name: monitoring-ooms
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
@@ -375,34 +375,34 @@ spec:
           image: ":latest"
           imagePullPolicy: IfNotPresent
           env:
-            - name: "C2CWSGIUTILS_CHECK_ES_SLEEP"
-              value: "30"
-            - name: "C2CWSGIUTILS_CHECK_ES_TRYNUMBER"
-              value: "10"
-            - name: "C2C_REQUESTS_DEFAULT_TIMEOUT"
-              value: "30"
-            - name: "ES_AUTH"
+            - name: 'C2CWSGIUTILS_CHECK_ES_SLEEP'
+              value: '30'
+            - name: 'C2CWSGIUTILS_CHECK_ES_TRYNUMBER'
+              value: '10'
+            - name: 'C2C_REQUESTS_DEFAULT_TIMEOUT'
+              value: '30'
+            - name: 'ES_AUTH'
               valueFrom:
                 secretKeyRef:
-                  name: "secret-env"
-                  key: "ES_AUTH"
-            - name: "ES_INDEXES"
-              value: "openshift-ch-1-*"
-            - name: "ES_URL"
-              value: "https://elasticsearch.logs.camptocamp.com/"
-            - name: "LOG_LEVEL"
-              value: "INFO"
-            - name: "LOG_TYPE"
-              value: "json"
-            - name: "NAMESPACE"
+                  name: 'secret-env'
+                  key: 'ES_AUTH'
+            - name: 'ES_INDEXES'
+              value: 'openshift-ch-1-*'
+            - name: 'ES_URL'
+              value: 'https://elasticsearch.logs.camptocamp.com/'
+            - name: 'LOG_LEVEL'
+              value: 'INFO'
+            - name: 'LOG_TYPE'
+              value: 'json'
+            - name: 'NAMESPACE'
               valueFrom:
                 configMapKeyRef:
-                  name: "env"
-                  key: "RELEASE_NAMESPACE"
-            - name: "STATSD_PREFIX"
-              value: "es"
-            - name: "STATSD_USE_TAGS"
-              value: "1"
+                  name: 'env'
+                  key: 'RELEASE_NAMESPACE'
+            - name: 'STATSD_PREFIX'
+              value: 'es'
+            - name: 'STATSD_USE_TAGS'
+              value: '1'
           terminationMessagePolicy: FallbackToLogsOnError
           resources:
             limits:
@@ -425,7 +425,7 @@ metadata:
   name: monitoring-statsd
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
@@ -512,7 +512,7 @@ metadata:
   name: monitoring-dbstats
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
@@ -545,35 +545,35 @@ spec:
               image: "camptocamp/c2cwsgiutils:latest"
               imagePullPolicy: IfNotPresent
               env:
-                - name: "LOG_LEVEL"
-                  value: "INFO"
-                - name: "PGDATABASE"
+                - name: 'LOG_LEVEL'
+                  value: 'INFO'
+                - name: 'PGDATABASE'
                   valueFrom:
                     secretKeyRef:
-                      name: "database"
-                      key: "database"
-                - name: "PGHOST"
+                      name: 'database'
+                      key: 'database'
+                - name: 'PGHOST'
                   valueFrom:
                     secretKeyRef:
-                      name: "database"
-                      key: "hostnameSlave"
-                - name: "PGPASSWORD"
+                      name: 'database'
+                      key: 'hostnameSlave'
+                - name: 'PGPASSWORD'
                   valueFrom:
                     secretKeyRef:
-                      name: "database"
-                      key: "password"
-                - name: "PGPORT"
+                      name: 'database'
+                      key: 'password'
+                - name: 'PGPORT'
                   valueFrom:
                     secretKeyRef:
-                      name: "database"
-                      key: "portSlave"
-                - name: "PGUSER"
+                      name: 'database'
+                      key: 'portSlave'
+                - name: 'PGUSER'
                   valueFrom:
                     secretKeyRef:
-                      name: "database"
-                      key: "username"
-                - name: "PROMETHEUS_URL"
-                  value: "http://prometheus-pushgateway.gs-metrics.svc:9091/"
+                      name: 'database'
+                      key: 'username'
+                - name: 'PROMETHEUS_URL'
+                  value: 'http://prometheus-pushgateway.gs-metrics.svc:9091/'
               terminationMessagePolicy: FallbackToLogsOnError
               resources:
                 limits:
@@ -603,7 +603,7 @@ metadata:
   name: monitoring
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
@@ -914,7 +914,7 @@ metadata:
   name: monitoring
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
@@ -972,7 +972,7 @@ metadata:
   name: monitoring
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
@@ -1105,7 +1105,7 @@ metadata:
   name: monitoring
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
@@ -1188,7 +1188,7 @@ metadata:
   name: monitoring
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
@@ -1400,7 +1400,7 @@ metadata:
   name: monitoring
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
@@ -1427,7 +1427,7 @@ metadata:
   name: monitoring
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
@@ -1493,7 +1493,7 @@ metadata:
   name: monitoring
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
@@ -1550,7 +1550,7 @@ metadata:
   name: monitoring
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
@@ -1591,7 +1591,7 @@ metadata:
   name: monitoring
   labels:
     helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/version: '1.0'
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
     app.kubernetes.io/instance: monitoring
