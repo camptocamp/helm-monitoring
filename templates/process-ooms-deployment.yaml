@@ -1,28 +1,25 @@
 {{- if .Values.processOoms.enabled}}
+{{- $config := dict "root" . "service" .Values.processOoms -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "common.fullname" ( dict "root" . "service" .Values.processOoms ) }}
-  labels: {{ include "common.labels" ( dict "root" . "service" .Values.processOoms ) | nindent 4 }}
-  {{- with .Values.processOoms.annotations }}
-  annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+  name: {{ include "common.fullname" $config }}
+  {{- include "common.metadata" $config | nindent 2 }}
 spec:
   replicas: 1
-  revisionHistoryLimit: {{ .Values.global.revisionHistoryLimit }}
+  revisionHistoryLimit: {{ .Values.global.revisionHistoryLimit | default 0 }}
   strategy:
     type: RollingUpdate
   selector:
-    matchLabels: {{- include "common.selectorLabels" ( dict "root" . "service" .Values.processOoms ) | nindent 6 }}
+    matchLabels: {{- include "common.selectorLabels" $config | nindent 6 }}
   template:
     metadata:
-      labels: {{- include "common.selectorLabels" ( dict "root" . "service" .Values.processOoms ) | nindent 8 }}
+      labels: {{- include "common.selectorLabels" $config | nindent 8 }}
       {{- with .Values.processOoms.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    spec: {{- include "common.podConfig" ( dict "root" . "service" .Values.processOoms "affinitySelector" (dict "app.kubernetes.io/instance" .Release.Name "app.kubernetes.io/name" ( include "common.name" ( dict "root" . "service" .Values.processOoms ) ) "app.kubernetes.io/component" "main" )) | nindent 6 }}
+    spec: {{- include "common.podConfig" ( dict "root" . "service" .Values.processOoms "affinitySelector" (dict "app.kubernetes.io/instance" .Release.Name "app.kubernetes.io/name" ( include "common.name" $config ) "app.kubernetes.io/component" "main" )) | nindent 6 }}
       containers:
         - name: process-ooms
           {{- include "common.containerConfig" ( dict "root" . "container" .Values.processOoms ) | nindent 10 }}
