@@ -371,7 +371,8 @@ spec:
       containers:
         - name: process-ooms
           securityContext:
-            null
+            runAsNonRoot: true
+            runAsUser: 33
           image: ":latest"
           imagePullPolicy: IfNotPresent
           env:
@@ -414,8 +415,6 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
-          securityContext:
-            runAsNonRoot: true
 ---
 # Source: monitoring/templates/statsd-deployment.yaml
 apiVersion: apps/v1
@@ -474,7 +473,8 @@ spec:
       containers:
         - name: statd
           securityContext:
-            null
+            runAsNonRoot: true
+            runAsUser: 33
           image: ":v0.17.0"
           imagePullPolicy: IfNotPresent
           terminationMessagePolicy: FallbackToLogsOnError
@@ -540,7 +540,8 @@ spec:
           containers:
             - name: dbstats
               securityContext:
-                null
+                runAsNonRoot: true
+                runAsUser: 33
               image: "camptocamp/c2cwsgiutils:latest"
               imagePullPolicy: IfNotPresent
               env:
