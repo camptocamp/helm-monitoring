@@ -1,4 +1,5 @@
 {{- if .Values.dbstats.enabled }}
+{{- $config := dict "root" . "service" .Values.dbstats -}}
 {{- if semverCompare ">=1.21.0" ( trimPrefix "v" $.Capabilities.KubeVersion.Version ) }}
 apiVersion: batch/v1
 {{- else -}}
@@ -6,12 +7,8 @@ apiVersion: batch/v1beta1
 {{- end }}
 kind: CronJob
 metadata:
-  name: {{ include "common.fullname" ( dict "root" . "service" .Values.dbstats ) }}
-  labels: {{ include "common.labels" ( dict "root" . "service" .Values.dbstats ) | nindent 4 }}
-  {{- with .Values.dbstats.annotations }}
-  annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+  name: {{ include "common.fullname" $config }}
+  {{- include "common.metadata" $config | nindent 2 }}
 spec:
   schedule: "{{ mod (regexReplaceAll "[a-f]+" (printf "%s-%s" .Release.Namespace .Release.Name | sha256sum) "" | trunc 5) 60 }} * * * *"
   successfulJobsHistoryLimit: 0
@@ -21,13 +18,8 @@ spec:
     spec:
       backoffLimit: 0
       template:
-        metadata:
-          labels: {{ include "common.selectorLabels" ( dict "root" . "service" .Values.dbstats ) | nindent 12 }}
-          {{- with .Values.dbstats.podAnnotations }}
-          annotations:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-        spec: {{ include "common.podConfig" ( dict "root" . "service" .Values.dbstats ) | nindent 10 }}
+        metadata: {{ include "common.podMetadata" $config | nindent 10 }}
+        spec: {{ include "common.podConfig" $config | nindent 10 }}
           restartPolicy: Never
           containers:
             - name: dbstats

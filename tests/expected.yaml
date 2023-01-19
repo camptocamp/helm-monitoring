@@ -420,7 +420,6 @@ spec:
 # Source: monitoring/templates/statsd-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
-
 metadata:
   name: monitoring-statsd
   labels:
