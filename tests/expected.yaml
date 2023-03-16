@@ -502,7 +502,6 @@ spec:
             httpGet:
               path: /metrics
               port: http
-  revisionHistoryLimit: 1
 ---
 # Source: monitoring/templates/dbstats-cronjob.yaml
 apiVersion: batch/v1
