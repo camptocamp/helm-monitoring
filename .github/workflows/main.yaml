@@ -37,6 +37,16 @@ jobs:
       - name: Install helm
         uses: azure/setup-helm@v3
 
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+          restore-keys: "pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}\npre-commit-"
+      - run: pre-commit run --all-files
+        env:
+          SKIP: helm-lock
+      - run: git diff
+        if: failure()
       - name: Checks
         run: c2cciutils-checks
 
@@ -47,14 +57,16 @@ jobs:
       - run: diff --ignore-trailing-space tests/actual.yaml tests/expected.yaml
 
       - name: Setup k3s/k3d
-        run: c2cciutils-k8s-install
+        run:
+          c2cciutils-k8s-install
 
-        # Install operator
+          # Install operator
       - run: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
       - run: helm repo update
-      - run: helm install prometheus prometheus-community/kube-prometheus-stack
+      - run:
+          helm install prometheus prometheus-community/kube-prometheus-stack
 
-        # Just test that we can apply it
+          # Just test that we can apply it
       - run: kubectl apply -f tests/expected.yaml
 
       - name: Stop k8s
