@@ -40,5 +40,4 @@ spec:
             httpGet:
               path: /metrics
               port: http
-  revisionHistoryLimit: {{ .Values.global.revisionHistoryLimit }}
 {{- end }}
