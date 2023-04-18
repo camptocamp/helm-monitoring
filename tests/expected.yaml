@@ -517,7 +517,7 @@ metadata:
     app.kubernetes.io/component: dbstats
 spec:
   schedule: "41 * * * *"
-  successfulJobsHistoryLimit: 0
+  successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
   concurrencyPolicy: Forbid
   jobTemplate:

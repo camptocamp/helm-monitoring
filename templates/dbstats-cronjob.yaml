@@ -11,12 +11,12 @@ metadata:
   {{- include "common.metadata" $config | nindent 2 }}
 spec:
   schedule: "{{ mod (regexReplaceAll "[a-f]+" (printf "%s-%s" .Release.Namespace .Release.Name | sha256sum) "" | trunc 5) 60 }} * * * *"
-  successfulJobsHistoryLimit: 0
-  failedJobsHistoryLimit: 1
+  successfulJobsHistoryLimit: {{ .Values.dbstats.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.dbstats.failedJobsHistoryLimit }}
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
-      backoffLimit: 0
+      backoffLimit: {{ .Values.dbstats.backoffLimit }}
       template:
         metadata: {{ include "common.podMetadata" $config | nindent 10 }}
         spec: {{ include "common.podConfig" $config | nindent 10 }}
