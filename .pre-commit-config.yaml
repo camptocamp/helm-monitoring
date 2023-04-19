@@ -4,15 +4,9 @@ ci:
     - copyright
     - helm-lock
     - ripsecrets
+    - helm-template-gen
+
 repos:
-  # - repo: local
-  #   hooks:
-  #     - id: gen-expected
-  #       name: Generate expected files
-  #       entry: make gen-expected
-  #       language: system
-  #       types: [yaml]
-  #       exclude: ^(\.pre-commit-config\.yaml|\.github/.*)$
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
@@ -35,6 +29,22 @@ repos:
       - id: copyright
       - id: workflows-require-timeout
       - id: helm-lock
+  - repo: https://github.com/camptocamp/helm-common
+    rev: 0.6.0
+    hooks:
+      - id: helm-template-gen
+        files: |-
+          (?x)(
+            ^templates/.*$
+            |^values\.yaml$
+            |^Chart\.yaml$
+            |^tests/values\.yaml$
+          )
+        args:
+          - --values=tests/values.yaml
+          - monitoring
+          - .
+          - tests/expected.yaml
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.4
     hooks:
