@@ -1582,24 +1582,3 @@ spec:
                 "release", "$1", "pod", "(.*)-c2cgeoportal-.*"
               )
             )
----
-# Source: monitoring/templates/service-monitor.yaml
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  name: monitoring
-  labels:
-    helm.sh/chart: monitoring
-    app.kubernetes.io/version: "1.0"
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: monitoring
-    app.kubernetes.io/instance: monitoring
-    app.kubernetes.io/component: main
-spec:
-  selector:
-    matchLabels:
-      prometheus: "true"
-  endpoints:
-    - port: prometheus
-      interval: 10s
-      honorLabels: true
