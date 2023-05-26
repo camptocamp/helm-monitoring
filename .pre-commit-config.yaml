@@ -42,7 +42,7 @@ repos:
           )
         args:
           - --values=tests/values.yaml
-          - monitoring
+          - test
           - .
           - tests/expected.yaml
   - repo: https://github.com/codespell-project/codespell
