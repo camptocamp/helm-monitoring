@@ -30,10 +30,10 @@ metadata:
     app.kubernetes.io/instance: test
     app.kubernetes.io/component: main
 data:
-  git_commit: 323249351482b3bbfc9f5004f65d400aa70f9ae7
+  git_commit: 7ceeda6c585217a19a1131663d8cd1f7d641b2a7
   git_tree_state: clean
-  go_version: go1.20.3
-  version: v3.11.3
+  go_version: go1.17.5
+  version: v3.9.0
 ---
 # Source: monitoring/templates/info-configmap.yaml
 apiVersion: v1
@@ -49,8 +49,8 @@ metadata:
     app.kubernetes.io/component: main
 data:
   Major: "1"
-  Minor: "26"
-  Version: v1.26.0
+  Minor: "24"
+  Version: v1.24.0
 ---
 # Source: monitoring/templates/statsd-configmap.yaml
 apiVersion: v1
