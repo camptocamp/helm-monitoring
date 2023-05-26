@@ -3,17 +3,17 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: monitoring-env
+  name: test-monitoring-env
   labels:
     helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
-    app.kubernetes.io/instance: monitoring
+    app.kubernetes.io/instance: test
     app.kubernetes.io/component: main
 data:
   CHART_NAME: monitoring
-  RELEASE_NAME: monitoring
+  RELEASE_NAME: test
   RELEASE_NAMESPACE: default
   DBSTATS_CLIENT_RELEASE: "latest"
 ---
@@ -21,13 +21,13 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: monitoring-capabilities-helm
+  name: test-monitoring-capabilities-helm
   labels:
     helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
-    app.kubernetes.io/instance: monitoring
+    app.kubernetes.io/instance: test
     app.kubernetes.io/component: main
 data:
   git_commit: 7ceeda6c585217a19a1131663d8cd1f7d641b2a7
@@ -39,13 +39,13 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: monitoring-capabilities-kube
+  name: test-monitoring-capabilities-kube
   labels:
     helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
-    app.kubernetes.io/instance: monitoring
+    app.kubernetes.io/instance: test
     app.kubernetes.io/component: main
 data:
   Major: "1"
@@ -56,13 +56,13 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: monitoring-statsd
+  name: test-monitoring-statsd
   labels:
     helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
-    app.kubernetes.io/instance: monitoring
+    app.kubernetes.io/instance: test
     app.kubernetes.io/component: statsd
 data:
   mappings.yaml: |
@@ -215,13 +215,13 @@ data:
 apiVersion: v1
 kind: Service
 metadata:
-  name: monitoring-statsd
+  name: test-monitoring-statsd
   labels:
     helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
-    app.kubernetes.io/instance: monitoring
+    app.kubernetes.io/instance: test
     app.kubernetes.io/component: statsd
     prometheus: "true"
 spec:
@@ -237,20 +237,20 @@ spec:
       name: prometheus
   selector:
     app.kubernetes.io/name: monitoring
-    app.kubernetes.io/instance: monitoring
+    app.kubernetes.io/instance: test
     app.kubernetes.io/component: statsd
 ---
 # Source: monitoring/templates/statsd-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: monitoring-statsd
+  name: test-monitoring-statsd
   labels:
     helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
-    app.kubernetes.io/instance: monitoring
+    app.kubernetes.io/instance: test
     app.kubernetes.io/component: statsd
 spec:
   replicas: 1
@@ -260,13 +260,13 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: monitoring
-      app.kubernetes.io/instance: monitoring
+      app.kubernetes.io/instance: test
       app.kubernetes.io/component: statsd
   template:
     metadata:
       labels:
         app.kubernetes.io/name: monitoring
-        app.kubernetes.io/instance: monitoring
+        app.kubernetes.io/instance: test
         app.kubernetes.io/component: statsd
     spec:
       serviceAccountName: full
@@ -284,7 +284,7 @@ spec:
               - key: app.kubernetes.io/instance
                 operator: In
                 values:
-                - monitoring
+                - test
               - key: app.kubernetes.io/name
                 operator: In
                 values:
@@ -293,7 +293,7 @@ spec:
       volumes:
         - name: mappings-volume
           configMap:
-            name: monitoring-statsd
+            name: test-monitoring-statsd
       containers:
         - name: statd
           securityContext:
@@ -331,16 +331,16 @@ spec:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: monitoring-dbstats
+  name: test-monitoring-dbstats
   labels:
     helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
-    app.kubernetes.io/instance: monitoring
+    app.kubernetes.io/instance: test
     app.kubernetes.io/component: dbstats
 spec:
-  schedule: "41 * * * *"
+  schedule: "32 * * * *"
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
   concurrencyPolicy: Forbid
@@ -351,7 +351,7 @@ spec:
         metadata:
           labels:
             app.kubernetes.io/name: monitoring
-            app.kubernetes.io/instance: monitoring
+            app.kubernetes.io/instance: test
             app.kubernetes.io/component: dbstats
         spec:
           serviceAccountName: full
@@ -408,12 +408,12 @@ spec:
                 - bash
                 - -cxe
                 - |
-                  TARGET="--prometheus_instance=default-monitoring-test1 --prometheus_url=${PROMETHEUS_URL}"
+                  TARGET="--prometheus_instance=default-test-monitoring-test1 --prometheus_url=${PROMETHEUS_URL}"
                   export STATSD_TAG_DB="test1"
                   c2cwsgiutils-stats-db \
                     --db=postgresql://$(PGUSER):$(PGPASSWORD)@$(PGHOST):$(PGPORT)/test1 \
                     ${TARGET}
-                  TARGET="--prometheus_instance=default-monitoring-test2 --prometheus_url=${PROMETHEUS_URL}"
+                  TARGET="--prometheus_instance=default-test-monitoring-test2 --prometheus_url=${PROMETHEUS_URL}"
                   export STATSD_TAG_DB="test2"
                   c2cwsgiutils-stats-db \
                     --db=postgresql://test2:test2@test2:6789/test2 \
@@ -423,13 +423,13 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: monitoring
+  name: test-monitoring
   labels:
     helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
-    app.kubernetes.io/instance: monitoring
+    app.kubernetes.io/instance: test
     app.kubernetes.io/component: main
     prometheus: example
     role: alert-rules
@@ -734,13 +734,13 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: monitoring
+  name: test-monitoring
   labels:
     helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
-    app.kubernetes.io/instance: monitoring
+    app.kubernetes.io/instance: test
     app.kubernetes.io/component: main
     prometheus: example
     role: alert-rules
@@ -752,7 +752,7 @@ spec:
           labels:
             kind: statsd_errors
             chart: monitoring
-            release: monitoring
+            release: test
           expr: |
             (
               sum by (namespace) (
@@ -792,13 +792,13 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: monitoring
+  name: test-monitoring
   labels:
     helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
-    app.kubernetes.io/instance: monitoring
+    app.kubernetes.io/instance: test
     app.kubernetes.io/component: main
     prometheus: example
     role: alert-rules
@@ -925,13 +925,13 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: monitoring
+  name: test-monitoring
   labels:
     helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
-    app.kubernetes.io/instance: monitoring
+    app.kubernetes.io/instance: test
     app.kubernetes.io/component: main
     prometheus: example
     role: alert-rules
@@ -1008,13 +1008,13 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: monitoring
+  name: test-monitoring
   labels:
     helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
-    app.kubernetes.io/instance: monitoring
+    app.kubernetes.io/instance: test
     app.kubernetes.io/component: main
     prometheus: example
     role: alert-rules
@@ -1125,7 +1125,7 @@ spec:
           labels:
             kind: project_quota
             chart: monitoring
-            release: monitoring
+            release: test
           expr: |
             max by (namespace) (
               sum by (namespace, resource) (
@@ -1140,7 +1140,7 @@ spec:
           labels:
             kind: project_cpu
             chart: monitoring
-            release: monitoring
+            release: test
           expr: |
             sum by (namespace) (
               max by (namespace, container_name, pod_name) (
@@ -1158,7 +1158,7 @@ spec:
           labels:
             kind: project_ram
             chart: monitoring
-            release: monitoring
+            release: test
           expr: |
             (
               sum by (namespace) (
@@ -1220,13 +1220,13 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: monitoring
+  name: test-monitoring
   labels:
     helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
-    app.kubernetes.io/instance: monitoring
+    app.kubernetes.io/instance: test
     app.kubernetes.io/component: main
     prometheus: example
     role: alert-rules
@@ -1247,13 +1247,13 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: monitoring
+  name: test-monitoring
   labels:
     helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
-    app.kubernetes.io/instance: monitoring
+    app.kubernetes.io/instance: test
     app.kubernetes.io/component: main
     prometheus: example
     role: alert-rules
@@ -1313,13 +1313,13 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: monitoring
+  name: test-monitoring
   labels:
     helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
-    app.kubernetes.io/instance: monitoring
+    app.kubernetes.io/instance: test
     app.kubernetes.io/component: main
     prometheus: example
     role: alert-rules
@@ -1370,13 +1370,13 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: monitoring
+  name: test-monitoring
   labels:
     helm.sh/chart: monitoring
     app.kubernetes.io/version: "1.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: monitoring
-    app.kubernetes.io/instance: monitoring
+    app.kubernetes.io/instance: test
     app.kubernetes.io/component: main
     prometheus: example
     role: alert-rules
