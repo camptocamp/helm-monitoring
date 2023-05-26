@@ -24,13 +24,13 @@ repos:
       - id: trailing-whitespace
       - id: mixed-line-ending
   - repo: https://github.com/sbrunner/hooks
-    rev: 0.3.2
+    rev: 0.5.0
     hooks:
       - id: copyright
       - id: workflows-require-timeout
       - id: helm-lock
   - repo: https://github.com/camptocamp/helm-common
-    rev: 0.6.0
+    rev: 0.7.0
     hooks:
       - id: helm-template-gen
         files: |-
@@ -67,7 +67,7 @@ repos:
     hooks:
       - id: git-check
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.20.0
+    rev: 0.23.0
     hooks:
       - id: check-github-actions
       - id: check-github-workflows
