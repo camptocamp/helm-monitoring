@@ -1,0 +1,18 @@
+{{- if .Values.dbstats.enabled }}
+{{- if .Values.prometheus.enabled }}
+{{- $config := dict "root" . "service" .Values.dbstats -}}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "common.fullname" $config }}
+  {{- include "common.metadata" $config | nindent 2 }}
+spec:
+  selector:
+    matchLabels: {{- include "common.selectorLabels" $config | nindent 6 }}
+  podMetricsEndpoints:
+    - honorLabels: true
+      interval: 10s
+      port: prometheus
+{{- end }}
+{{- end }}

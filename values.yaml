@@ -11,6 +11,9 @@ global:
 nameOverride: ''
 fullnameOverride: ''
 
+prometheus:
+  enabled: true
+
 statsd:
   enabled: true
   serviceName: statsd
