@@ -419,6 +419,29 @@ spec:
                     --db=postgresql://test2:test2@test2:6789/test2 \
                     ${TARGET}
 ---
+# Source: monitoring/templates/dbstats-podmonitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: test-monitoring-dbstats
+  labels:
+    helm.sh/chart: monitoring
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: test
+    app.kubernetes.io/component: dbstats
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: monitoring
+      app.kubernetes.io/instance: test
+      app.kubernetes.io/component: dbstats
+  podMetricsEndpoints:
+    - honorLabels: true
+      interval: 10s
+      port: prometheus
+---
 # Source: monitoring/templates/prometheus-rules.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
