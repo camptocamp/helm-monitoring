@@ -69,8 +69,6 @@ dbstats:
   env:
     LOG_LEVEL:
       value: INFO
-    PROMETHEUS_URL:
-      value: http://prometheus-pushgateway.gs-metrics.svc:9091/
     PGUSER:
       type: secret
       name: database

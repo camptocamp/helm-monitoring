@@ -15,7 +15,7 @@ prometheus:
   enabled: true
 
 statsd:
-  enabled: true
+  enabled: false
   serviceName: statsd
   log_level: info
   image:
@@ -81,17 +81,20 @@ dbstats:
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
   backoffLimit: 0
+
   image:
     repository: camptocamp/c2cwsgiutils
     tag: latest
     sha:
+
+  # By default we use Prometheus pull model, but we can use pushgateway
+  prometheusPushgateway:
+    enabled: false
+
   env: {}
   # LOG_LEVEL
-  # PROMETHEUS_URL: http://prometheus-pushgateway.gs-metrics.svc:9091/
-  # STATSD_URL
   annotations: {}
   resources: {}
-  prometheus: true
   dbs: []
   # database: name # default to PGDATABASE environment variable
   # user: username # default to PGUSER environment variable
