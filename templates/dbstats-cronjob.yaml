@@ -39,4 +39,8 @@ spec:
                     --prometheus-url=${PROMETHEUS_URL}"
                     {{- end }}
                   {{- end }}
+              ports:
+                - name: prometheus
+                  containerPort: 9090
+                  protocol: TCP
 {{- end }}

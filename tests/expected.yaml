@@ -93,6 +93,8 @@ spec:
               image: "camptocamp/c2cwsgiutils:latest"
               imagePullPolicy: IfNotPresent
               env:
+                - name: "C2C_PROMETHEUS_PORT"
+                  value: "9090"
                 - name: "LOG_LEVEL"
                   value: INFO
                 - name: "PGDATABASE"
@@ -135,6 +137,10 @@ spec:
                     --db=postgresql://$(PGUSER):$(PGPASSWORD)@$(PGHOST):$(PGPORT)/test1 \
                   c2cwsgiutils-stats-db \
                     --db=postgresql://test2:test2@test2:6789/test2 \
+              ports:
+                - name: prometheus
+                  containerPort: 9090
+                  protocol: TCP
 ---
 # Source: monitoring/templates/dbstats-podmonitor.yaml
 apiVersion: monitoring.coreos.com/v1

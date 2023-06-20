@@ -91,8 +91,11 @@ dbstats:
   prometheusPushgateway:
     enabled: false
 
-  env: {}
+  env:
+    C2C_PROMETHEUS_PORT:
+      value: '9090'
   # LOG_LEVEL
+
   annotations: {}
   resources: {}
   dbs: []
