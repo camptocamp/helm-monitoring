@@ -29,16 +29,14 @@ spec:
                 - -cxe
                 - |
                   {{- range .Values.dbstats.dbs  }}
-                  {{- if $.Values.dbstats.prometheusPushgateway.enabled }}
-                  TARGET="--prometheus-instance={{ $.Release.Namespace }}-{{ template "common.fullname" ( dict "root" $ "service" $.Values ) }}-{{ .database | default "$(PGDATABASE)" }} --prometheus-url=${PROMETHEUS_URL}"
-                  {{- else }}
-                  TARGET=""
-                  {{- end }}
                   c2cwsgiutils-stats-db \
                     --db=postgresql://{{ .user | default "$(PGUSER)" }}:{{ .password | default "$(PGPASSWORD)" }}@{{ .host | default "$(PGHOST)" }}:{{ .port | default "$(PGPORT)" }}/{{ .database | default "$(PGDATABASE)" }} \
                     {{- range .schemas }}
                     --schema={{ . }} \
                     {{- end }}
-                    ${TARGET}
+                    {{- if $.Values.dbstats.prometheusPushgateway.enabled }}
+                    --prometheus-instance={{ $.Release.Namespace }}-{{ template "common.fullname" ( dict "root" $ "service" $.Values ) }}-{{ .database | default "$(PGDATABASE)" }}
+                    --prometheus-url=${PROMETHEUS_URL}"
+                    {{- end }}
                   {{- end }}
 {{- end }}

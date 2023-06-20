@@ -131,14 +131,10 @@ spec:
                 - bash
                 - -cxe
                 - |
-                  TARGET=""
                   c2cwsgiutils-stats-db \
                     --db=postgresql://$(PGUSER):$(PGPASSWORD)@$(PGHOST):$(PGPORT)/test1 \
-                    ${TARGET}
-                  TARGET=""
                   c2cwsgiutils-stats-db \
                     --db=postgresql://test2:test2@test2:6789/test2 \
-                    ${TARGET}
 ---
 # Source: monitoring/templates/dbstats-podmonitor.yaml
 apiVersion: monitoring.coreos.com/v1
