@@ -34,12 +34,13 @@ repos:
     hooks:
       - id: helm-template-gen
         files: |-
-          (?x)(
-            ^templates/.*$
-            |^values\.yaml$
-            |^Chart\.yaml$
-            |^tests/values\.yaml$
-          )
+          (?x)^(
+            templates/.*$
+            |values\.yaml
+            |Chart\.yaml
+            |tests/values\.yaml
+            |prometheus_rules/.*\.rules
+          )$
         args:
           - --values=tests/values.yaml
           - test

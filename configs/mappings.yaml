@@ -70,30 +70,6 @@ mappings:
     labels:
       metric: "$1"
 
-  {{- if .Values.elasticsearch.enabled }}
-  - match: "^es\\.max_age$"
-    match_metric_type: gauge
-    name: statsd_es_max_age
-    ttl: 20m
-
-  - match: "^es\\.roundtrip"
-    match_metric_type: gauge
-    name: statsd_es_roundtrip
-    ttl: 20m
-
-  - match: "^es\\.requests"
-    match_metric_type: timer
-    name: statsd_es_requests
-    ttl: 20m
-
-  - match: "^es\\.(.*)$"
-    match_metric_type: timer
-    name: statsd_es
-    labels:
-      metric: "$1"
-    ttl: 20m
-  {{- end }}
-
   - match: "^([^.]+)\\.([^.]+)\\.gunicorn\\.(.*)$"
     match_metric_type: timer
     name: statsd_gunicorn_timer_seconds

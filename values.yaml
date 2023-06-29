@@ -35,23 +35,6 @@ print:
   enabled: false
   maxWaitSeconds: 10
 
-apache:
-  enabled: false
-
-elasticsearch:
-  enabled: false
-  logTimeout: 120 # seconds before which a log must appear on ElasticSearch
-  maxAge: 15 # minutes
-  env: {}
-
-namespaceGlobal:
-  enabled: false
-  project:
-    resolution: 2m
-  disk:
-    warning: 90
-    error: 92
-
 kubernetes:
   containers:
     maxMemUsagePercent: 90
@@ -105,35 +88,6 @@ dbstats:
   # host: hostname # default to PGHOST environment variable
   # port: port # default to PGPORT environment variable
   # schema: [schema1, schema2]
-
-cache:
-  enabled: false
-
-postgresql:
-  enabled: false
-  hosts:
-    master:
-      # A secret with password, username, hostname, hostnameSlave, database
-      secret: secrets-postgresql-prod
-      addressKey: hostname
-    slave:
-      secret: secrets-postgresql-prod
-      addressKey: hostnameSlave
-    master-12:
-      secret: secrets-postgresql-prod-12
-      addressKey: hostname
-    slave-12:
-      secret: secrets-postgresql-prod-12
-      addressKey: hostnameSlave
-  connections:
-    warning: 0.80
-    error: 0.90
-  replication:
-    period: 10m
-    maxLag: '10'
-  image:
-    repository: wrouesnel/postgres_exporter
-    tag: v0.8.0
 
 serviceAccount:
   # Specifies whether a service account should be created
