@@ -10,19 +10,6 @@ print:
   enabled: true
   maxWaitSeconds: 10
 
-apache:
-  enabled: true
-
-elasticsearch:
-  enabled: true
-  indexes: openshift-ch-1-gs-mutualized-print-*
-  resources:
-    requests:
-      cpu: 3m
-      memory: 34.1Mi
-    limits:
-      memory: 64Mi
-
 processOoms:
   env:
     C2CWSGIUTILS_CHECK_ES_TRYNUMBER:
@@ -102,18 +89,6 @@ dbstats:
       schema:
         - test2
         - test3
-
-namespaceGlobal:
-  enabled: true
-
-postgresql:
-  enabled: true
-  resources:
-    requests:
-      cpu: 1m
-      memory: 4Mi
-    limits:
-      memory: 20Mi
 
 serviceAccount:
   create: true
